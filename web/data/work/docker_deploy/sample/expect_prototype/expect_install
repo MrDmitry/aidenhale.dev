@@ -1,0 +1,12 @@
+#!/usr/bin/env expect
+spawn ./install.sh
+expect {
+    "Install location:" {
+        send "/opt/vendor\r"
+        exp_continue
+    }
+    "Happy Y/N:" {
+        send "Y\r"
+        exp_continue
+    }
+}
