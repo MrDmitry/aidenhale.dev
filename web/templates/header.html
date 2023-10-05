@@ -1,0 +1,15 @@
+{{ block "header" . }}
+
+<header>
+    <nav hx-boost="true">
+        <ul>
+            {{ range .Nav.Items }}
+            <li>
+                <a href="{{ .Url }}">{{ .Name }}</a>
+            </li>
+            {{ end }}
+        </ul>
+    </nav>
+</header>
+
+{{ end }}
