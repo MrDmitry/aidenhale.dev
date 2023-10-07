@@ -6,14 +6,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type IndexData struct {
+type NotFoundData struct {
 	PageTitle string
 	Nav       monke.NavData
 }
 
-func Index(c echo.Context) error {
-	return c.Render(200, "index.html", IndexData{
-		PageTitle: "Blog",
+func NotFound(c echo.Context) error {
+	return c.Render(404, "404.html", NotFoundData{
+		PageTitle: "Not found",
 		Nav:       monke.Nav,
 	})
 }

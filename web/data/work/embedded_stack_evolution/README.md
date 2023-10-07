@@ -73,7 +73,7 @@ so it's not as painful as it may seem. Eventually we settled on 4 image flavors 
 * `build` - based on `gui`, has only SDK installed, intended for headless builds
 * `runtime` - based on `build`, installs runtime, intended for general development and test runtime
 
-![Developer images stacked](./assets/stacked_images.svg)
+![Developer images stacked](./assets/stacked_images.png)
 
 These images are monstrous, however they share the beefy base layers and we rarely update _all_ the layers when
 releasing new images. Due to some vendor tooling quirks, developers had to use the `gui` image, even though most of

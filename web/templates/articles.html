@@ -1,0 +1,7 @@
+{{ block "articles" . }}
+{{ range . }}
+<article hx-boost="true">
+    <a href="{{ .Url }}">{{ .Title }}</a>
+</article>
+{{ end }}
+{{ end }}

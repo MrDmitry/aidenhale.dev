@@ -9,10 +9,10 @@ I've spent 8 years working under some manifestation of Agile methodology:
 All of these years I had some [Agile shaman](https://grugbrain.dev/#grug-on-Agile) herding me around and boasting to
 management how much the team did. There was always more boasting than actual work completed.
 
-Every time you criticize Agile, even in a constructive manner of _that specific thing just didn't work for us_, you
-hear the "well you just didn't Agile right". Ugh.
+Every time I criticized Agile, even in a constructive manner "_that specific thing just didn't work for us_", I got to
+hear the staple "well you just didn't Agile right". Ugh.
 
-As with most of popular things, the underlying values and ideas behind Agile are pretty cool:
+As with most popular things, the underlying values and ideas behind Agile are pretty cool:
 * learn what your user wants
 * don't lock yourself into bad decisions, be flexible
 * try delivering frequently, it helps to idenify bad decisions
@@ -24,24 +24,23 @@ Cool values, but **apparently** everyone gets them wrong.
 
 # An illusion of work
 
-The only thing Agile excels at is generating endless burn charts that mean something to some people. Velocity, am I
-right?
+One of the few things Agile excels at is generating endless burn charts that mean something to some people.
 
-Here's an **agile shaman manifesto**:
+If I were to draft an Agile manifesto based on what our Agile shamans did, it would look like this:
 * **do what customer asks**
 * **don't bother with requirements**
 * **underpromise and deliver something**
-* **schedule some more meetings**
 * **motivate through gamification**
 * **punish self-motivation by piling on responsibilities**
 * **ensure "temporary hacks for a demo" become permanent**
-* **never fix old hacks - you can't demo the same thing**
+* **never fix old hacks - you can't demo the same thing twice**
+* **schedule some more meetings**
 * **committees are the only way forward**
 
-Maybe that is what's killing me - meetings and committees.
+Maybe that is what bothers me the most - meetings and committees.
 
 They say "every meeting has to have a purpose" but let a meeting become recurring and it becomes a ritual. A couple of
-weeks go by and your day is 40% meetings that you "listen-in just in case".
+weeks go by and your day is 40% meetings that you "listen-in just in case, oh and provide some feedback when you can".
 
 Then they pump out committees faster than teams deliver features:
 * **Steering Committee** to decide what fire to start on any particular week

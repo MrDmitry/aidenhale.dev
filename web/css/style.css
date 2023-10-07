@@ -2,3 +2,11 @@ body {
     background: black;
     color: white;
 }
+
+a {
+    color: silver;
+}
+
+a:visited {
+    color: gray;
+}
