@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -32,7 +33,7 @@ func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
 	for k, _ := range statics {
-		if parts[0] == k[1:] {
+		if parts[1] == k[1:] {
 			return true
 		}
 	}
@@ -42,6 +43,45 @@ func AssetSkipper(c echo.Context) bool {
 		}
 	}
 	return false
+}
+
+func ResolveRelativePaths() echo.MiddlewareFunc {
+	// taken from https://github.com/labstack/echo/blob/4bc3e475e3137b6402933eec5e6fde641e0d2320/middleware/slash.go#L123-L130
+	var sanitizeUri = func(uri string) string {
+		// double slash `\\`, `//` or even `\/` is absolute uri for browsers and by redirecting request to that uri
+		// we are vulnerable to open redirect attack. so replace all slashes from the beginning with single slash
+		if len(uri) > 1 && (uri[0] == '\\' || uri[0] == '/') && (uri[1] == '\\' || uri[1] == '/') {
+			uri = "/" + strings.TrimLeft(uri, `/\`)
+		}
+		return uri
+	}
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			url := req.URL
+			path := url.Path
+			if len(path) > 0 {
+				absPath, err := filepath.Abs(path)
+				if err != nil {
+					log.Warnf("failed to process absolute path for %s: %+v", path, err)
+					return c.NoContent(http.StatusBadRequest)
+				}
+				if path[len(path)-1] == '/' {
+					absPath += "/"
+				}
+				absPath = sanitizeUri(absPath)
+				log.Warnf("%s == %s", absPath, path)
+				if absPath != path {
+					return c.Redirect(http.StatusMovedPermanently, absPath)
+				}
+				// Forward
+				req.RequestURI = absPath + "?" + c.QueryString()
+				url.Path = absPath
+			}
+			return next(c)
+		}
+	}
 }
 
 func main() {
@@ -61,7 +101,8 @@ func main() {
 	}
 
 	e.Use(middleware.Logger())
-	e.Use(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
+	e.Pre(ResolveRelativePaths())
+	e.Pre(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
 		Skipper:      AssetSkipper,
 		RedirectCode: http.StatusMovedPermanently,
 	}))

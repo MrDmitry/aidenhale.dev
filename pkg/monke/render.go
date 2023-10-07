@@ -3,23 +3,33 @@ package monke
 import (
 	"io"
 	"os"
+	"path"
+	"path/filepath"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/labstack/gommon/log"
 )
 
 type renderHookData struct {
-	prefix []byte
+	prefix string
 }
 
-// html.AbsolutePrefix doesn't work for links that start with ./ while `hx-boost` updates the history only after a
-// request to an <img src="./..."/> fails with 404 (requesting an asset from the old URL path)
+// `hx-boost` updates the history only after a request to an <img src="./..."/> fails with 404 (requesting an asset
+// from the old URL path) but I want to keep using `hx-boost` so I gotta hack it
 func makeRenderHook(data *renderHookData) html.RenderNodeFunc {
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if image, ok := node.(*ast.Image); ok && image.Destination[0] == '.' {
-			image.Destination = append(data.prefix, image.Destination[2:]...)
+			relPath := path.Join(data.prefix, string(image.Destination))
+			result, err := filepath.Abs(relPath)
+
+			if err == nil {
+				image.Destination = []byte(result)
+			} else {
+				log.Warnf("failed to resolve absolute path for %s: %+v", relPath, err)
+			}
 		}
 		return ast.GoToNext, false
 	}
@@ -33,7 +43,7 @@ func mdToHTML(md []byte, absPrefix string) []byte {
 
 	// create HTML renderer with extensions
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank | html.LazyLoadImages
-	opts := html.RendererOptions{Flags: htmlFlags, RenderNodeHook: makeRenderHook(&renderHookData{prefix: []byte(absPrefix)})}
+	opts := html.RendererOptions{Flags: htmlFlags, RenderNodeHook: makeRenderHook(&renderHookData{prefix: absPrefix})}
 	renderer := html.NewRenderer(opts)
 
 	return markdown.Render(doc, renderer)
