@@ -21,7 +21,7 @@ func Article(c echo.Context) error {
 	readme := fmt.Sprintf("./web/data/%s/%s/README.md", c.Param("topic"), c.Param("article"))
 	var body []byte = nil
 
-	body, err := monke.RenderMarkdownAbs(readme, path)
+	body, err := monke.RenderMarkdownToHTMLAbs(readme, path)
 
 	if err != nil {
 		return NotFound(c)

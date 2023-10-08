@@ -22,7 +22,7 @@ func Blog(c echo.Context) error {
 	readme := fmt.Sprintf("./web/data/%s/README.md", topic)
 	var body []byte = nil
 
-	body, err := monke.RenderMarkdown(readme)
+	body, err := monke.RenderMarkdownToHTML(readme)
 
 	if err != nil {
 		log.Warnf("could not generate body: %+v", readme, err)

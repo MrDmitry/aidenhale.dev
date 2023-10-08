@@ -5,19 +5,23 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	toml "github.com/pelletier/go-toml"
 )
 
 type Article struct {
-	Id    string
-	Url   string
-	Title string
+	Id      string
+	Url     string
+	Summary string
+
+	ArticleMeta
 }
 
 type ArticleMeta struct {
-	Title string
+	Title   string
+	Created time.Time
 }
 
 func GetArticles(topic string) ([]Article, error) {
@@ -64,10 +68,19 @@ func GetArticles(topic string) ([]Article, error) {
 			continue
 		}
 
+		readme := path.Join(item, "README.md")
+		summary, err := RenderMarkdownToTextPreview(readme, 200)
+
+		if err != nil {
+			log.Warnf("could not process %s, skipping: %+v", readme, err)
+			continue
+		}
+
 		results = append(results, Article{
-			Id:    info.Name(),
-			Url:   fmt.Sprintf("/blog/%s/%s/", topic, info.Name()),
-			Title: meta.Title,
+			Id:          info.Name(),
+			Url:         fmt.Sprintf("/blog/%s/%s/", topic, info.Name()),
+			Summary:     string(summary),
+			ArticleMeta: meta,
 		})
 	}
 
