@@ -1,11 +1,9 @@
 package pages
 
 import (
-	"fmt"
 	"html/template"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 
 	"mrdmitry/blog/pkg/monke"
 )
@@ -14,22 +12,19 @@ type BlogData struct {
 	PageTitle string
 	Nav       monke.NavData
 	Body      template.HTML
-	Articles  []monke.Article
+	Articles  []*monke.Article
 }
 
 func Blog(c echo.Context) error {
-	topic := c.Param("topic")
-	readme := fmt.Sprintf("./web/data/%s/README.md", topic)
-	var body []byte = nil
+	categoryId := c.Param("category")
 
-	body, err := monke.RenderMarkdownToHTML(readme)
-
-	if err != nil {
-		log.Warnf("could not generate body: %+v", readme, err)
-		body = nil
+	if monke.Db.Categories[categoryId] == nil {
+		return NotFound(c)
 	}
 
-	articles, _ := monke.GetArticles(topic)
+	category := monke.Db.Categories[categoryId]
+	body, _ := monke.RenderMarkdownToHTML(category.ReadmePath)
+	articles := category.GetArticlesByTime(10, 0)
 
 	return c.Render(200, "blog.html", BlogData{
 		PageTitle: "Articles",

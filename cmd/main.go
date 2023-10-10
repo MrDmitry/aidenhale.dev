@@ -71,7 +71,6 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 					absPath += "/"
 				}
 				absPath = sanitizeUri(absPath)
-				log.Warnf("%s == %s", absPath, path)
 				if absPath != path {
 					return c.Redirect(http.StatusMovedPermanently, absPath)
 				}
@@ -93,6 +92,7 @@ func main() {
 		log.Fatalf("could not load templates: %+v", err)
 	}
 
+	monke.InitDb("./web/data")
 	monke.NavInit()
 
 	e := echo.New()
@@ -114,9 +114,9 @@ func main() {
 	}
 
 	e.GET("/", pages.Index)
-	e.GET("/blog/:topic/", pages.Blog)
-	e.GET("/blog/:topic/:article/", pages.Article)
-	e.GET("/blog/:topic/:article/assets/:asset", pages.ArticleAssets)
+	e.GET("/blog/:category/", pages.Blog)
+	e.GET("/blog/:category/:article/", pages.Article)
+	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAssets)
 
 	e.Logger.Fatal(e.Start(":31337"))
 }

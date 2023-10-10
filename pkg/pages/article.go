@@ -18,7 +18,7 @@ type ArticleData struct {
 
 func Article(c echo.Context) error {
 	path := c.Request().URL.Path
-	readme := fmt.Sprintf("./web/data/%s/%s/README.md", c.Param("topic"), c.Param("article"))
+	readme := fmt.Sprintf("./web/data/%s/%s/README.md", c.Param("category"), c.Param("article"))
 	var body []byte = nil
 
 	body, err := monke.RenderMarkdownToHTMLAbs(readme, path)
@@ -35,7 +35,7 @@ func Article(c echo.Context) error {
 }
 
 func ArticleAssets(c echo.Context) error {
-	path := fmt.Sprintf("./web/data/%s/%s/assets/%s", c.Param("topic"), c.Param("article"), c.Param("asset"))
+	path := fmt.Sprintf("./web/data/%s/%s/assets/%s", c.Param("category"), c.Param("article"), c.Param("asset"))
 	file, err := os.Open(path)
 	if err != nil {
 		return c.NoContent(404)

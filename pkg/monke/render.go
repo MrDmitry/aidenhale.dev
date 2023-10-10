@@ -1,6 +1,7 @@
 package monke
 
 import (
+	"errors"
 	"io"
 	"os"
 	"path"
@@ -53,6 +54,10 @@ func mdToHTML(md []byte, absPrefix string) []byte {
 }
 
 func RenderMarkdownToHTMLAbs(f string, absPrefix string) ([]byte, error) {
+	if f == "" {
+		return nil, errors.New("empty filepath given")
+	}
+
 	file, err := os.ReadFile(f)
 
 	if err != nil {
