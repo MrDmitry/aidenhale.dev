@@ -1,9 +1,5 @@
-{{ block "articles" . }}
-{{ range . }}
-<article hx-boost="true">
-    <a href="{{ .Url }}">{{ .Title }}</a>
-    <time>{{ .Created.Format "2006 Jan 02" }}</time>
-    <summary>{{ .Summary }}</summary>
-</article>
-{{ end }}
-{{ end }}
+{{- block "Articles" . }}
+{{- range .Articles }}
+    {{- template "articleCard" . }}
+{{- end }}
+{{- end }}

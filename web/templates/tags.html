@@ -3,7 +3,8 @@
     {{ template "head" . }}
     <body>
         {{ template "header" . }}
-        {{ .Body }}
-        {{ template "articles" .Articles }}
+        {{ range .Tags }}
+            <div>{{ .Name }} - {{ .Count }}</div>
+        {{ end }}
     </body>
 </html>

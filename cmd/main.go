@@ -25,14 +25,14 @@ func (t *BlogRenderer) Render(w io.Writer, name string, data interface{}, c echo
 
 var statics = map[string]string{
 	"/assets": "./web/assets",
-	"/css":    "./web/css",
+	"/css":    "./web/dist/css",
 	"/js":     "./web/js",
 }
 
 func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
-	for k, _ := range statics {
+	for k := range statics {
 		if parts[1] == k[1:] {
 			return true
 		}
@@ -92,7 +92,12 @@ func main() {
 		log.Fatalf("could not load templates: %+v", err)
 	}
 
-	monke.InitDb("./web/data")
+	err = monke.InitDb("./web/data")
+
+	if err != nil {
+		log.Fatalf("could not initialize database: %+v", err)
+	}
+
 	monke.NavInit()
 
 	e := echo.New()
@@ -113,10 +118,13 @@ func main() {
 		e.Static(k, v)
 	}
 
-	e.GET("/", pages.Index)
-	e.GET("/blog/:category/", pages.Blog)
-	e.GET("/blog/:category/:article/", pages.Article)
-	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAssets)
+	e.GET("/", pages.IndexPage)
+	e.GET("/articles/", pages.ArticlesSnippet)
+	e.GET("/blog/:category/", pages.CategoryPage)
+	e.GET("/blog/:category/:article/", pages.ArticlePage)
+	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAsset)
+	e.GET("/tags/", pages.TagsPage)
+	e.GET("/tags/:tag/", pages.TagPage)
 
 	e.Logger.Fatal(e.Start(":31337"))
 }

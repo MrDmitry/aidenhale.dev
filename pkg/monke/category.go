@@ -1,6 +1,7 @@
 package monke
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -11,28 +12,25 @@ import (
 )
 
 type Category struct {
-	Root            string              // filepath to the category root location
-	Id              string              // human readable identifier
-	Url             string              // article path
-	ReadmePath      string              // filepath to README.md with category contents
-	Articles        map[string]*Article // map of article by their id
-	articlesCreated []*Article          // list of articles ordered by their created date, descending
+	Root       string // filepath to the category root location
+	Id         string // human readable identifier
+	Url        string // article path
+	ReadmePath string // filepath to README.md with category contents
 
-	CategoryMeta
+	CategoryData
 }
 
-type CategoryMeta struct {
+type categoryMeta struct {
+	Version int
+}
+
+type CategoryData struct {
 	Title string
 }
 
-func (c Category) GetArticlesByTime(limit int, offset int) []*Article {
-	limit = min(limit, len(c.articlesCreated))
-	in := c.articlesCreated[offset:limit]
-	if len(in) == 0 {
-		return nil
-	}
-
-	return in
+type CategoryToml struct {
+	Meta categoryMeta
+	Data CategoryData
 }
 
 func NewCategory(f string) (*Category, error) {
@@ -43,13 +41,7 @@ func NewCategory(f string) (*Category, error) {
 	}
 	defer dir.Close()
 
-	contents, err := dir.ReadDir(0)
-	if err != nil {
-		log.Fatalf("Failed to read %s: %+v", f, err)
-		return nil, err
-	}
-
-	var meta CategoryMeta
+	var meta CategoryToml
 
 	monkeMeta := path.Join(f, "monke.toml")
 	tree, err := toml.LoadFile(monkeMeta)
@@ -66,6 +58,11 @@ func NewCategory(f string) (*Category, error) {
 		return nil, err
 	}
 
+	if meta.Meta.Version != 0 {
+		log.Warnf("incompatible version detected: expected %i, found %i", 0, meta.Meta.Version)
+		return nil, errors.New("incompatible version")
+	}
+
 	readmePath := path.Join(f, "README.md")
 	_, err = os.Open(readmePath)
 	if err != nil {
@@ -78,21 +75,7 @@ func NewCategory(f string) (*Category, error) {
 	category.Id = filepath.Base(category.Root)
 	category.Url = fmt.Sprintf("/blog/%s/", category.Id)
 	category.ReadmePath = readmePath
-	category.Articles = make(map[string]*Article)
-	category.CategoryMeta = meta
-
-	for _, item := range contents {
-		if !item.IsDir() {
-			continue
-		}
-		cName := item.Name()
-		article, err := NewArticle(filepath.Join(f, cName), category)
-		if err != nil {
-			continue
-		}
-		category.Articles[cName] = article
-		category.articlesCreated = append(category.articlesCreated, article)
-	}
+	category.CategoryData = meta.Data
 
 	return category, nil
 }

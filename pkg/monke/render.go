@@ -71,37 +71,22 @@ func RenderMarkdownToHTML(f string) ([]byte, error) {
 	return RenderMarkdownToHTMLAbs(f, "")
 }
 
-type previewTracker struct {
-	written     int
-	threshold   int
-	wantSpace   bool
-	terminating bool
-}
-
-func previewRenderer(data *previewTracker) html.RenderNodeFunc {
-	data.written = 0
-	data.wantSpace = false
-	data.terminating = false
+func textRenderer() html.RenderNodeFunc {
+	wantSpace := false
 
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-		if data.written >= data.threshold {
-			if !data.terminating {
-				w.Write([]byte("..."))
-			}
-			data.terminating = true
-			return ast.Terminate, true
-		}
 		switch node := node.(type) {
 		case *ast.Text:
-			size := min(len(node.Literal), data.threshold-data.written)
-			w.Write(node.Literal[:size])
-			data.wantSpace = (node.Literal[size-1] != ' ')
-			data.written += size
+			size := len(node.Literal)
+			if size == 0 {
+				break
+			}
+			w.Write(node.Literal)
+			wantSpace = (node.Literal[size-1] != ' ')
 		case *ast.Paragraph:
 			// Separate paragraphs with spaces
-			if entering && data.wantSpace {
+			if entering && wantSpace {
 				w.Write([]byte(" "))
-				data.written += 1
 			}
 			break
 		case *ast.Document:
@@ -127,7 +112,7 @@ func previewRenderer(data *previewTracker) html.RenderNodeFunc {
 	}
 }
 
-func mdToTextPreview(md []byte, t int) []byte {
+func mdToTextPreview(md []byte) []byte {
 	// create markdown parser with extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
@@ -137,19 +122,19 @@ func mdToTextPreview(md []byte, t int) []byte {
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{
 		Flags:          htmlFlags,
-		RenderNodeHook: previewRenderer(&previewTracker{threshold: t}),
+		RenderNodeHook: textRenderer(),
 	}
 	renderer := html.NewRenderer(opts)
 
 	return markdown.Render(doc, renderer)
 }
 
-func RenderMarkdownToTextPreview(f string, t int) ([]byte, error) {
+func RenderMarkdownToText(f string) ([]byte, error) {
 	file, err := os.ReadFile(f)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return mdToTextPreview(file, t), nil
+	return mdToTextPreview(file), nil
 }

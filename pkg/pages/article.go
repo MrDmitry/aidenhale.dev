@@ -10,13 +10,14 @@ import (
 	"mrdmitry/blog/pkg/monke"
 )
 
-type ArticleData struct {
-	PageTitle string
-	Nav       monke.NavData
-	Body      template.HTML
+type ArticlePageData struct {
+	HeadSnippet
+
+	Nav  monke.NavData
+	Body template.HTML
 }
 
-func Article(c echo.Context) error {
+func ArticlePage(c echo.Context) error {
 	path := c.Request().URL.Path
 	readme := fmt.Sprintf("./web/data/%s/%s/README.md", c.Param("category"), c.Param("article"))
 	var body []byte = nil
@@ -24,17 +25,17 @@ func Article(c echo.Context) error {
 	body, err := monke.RenderMarkdownToHTMLAbs(readme, path)
 
 	if err != nil {
-		return NotFound(c)
+		return NotFoundPage(c)
 	}
 
-	return c.Render(200, "article.html", ArticleData{
-		PageTitle: "Article",
-		Nav:       monke.Nav,
-		Body:      template.HTML(string(body)),
+	return c.Render(200, "article.html", ArticlePageData{
+		HeadSnippet: NewHeadSnippet("Article"),
+		Nav:         monke.Nav,
+		Body:        template.HTML(string(body)),
 	})
 }
 
-func ArticleAssets(c echo.Context) error {
+func ArticleAsset(c echo.Context) error {
 	path := fmt.Sprintf("./web/data/%s/%s/assets/%s", c.Param("category"), c.Param("article"), c.Param("asset"))
 	file, err := os.Open(path)
 	if err != nil {

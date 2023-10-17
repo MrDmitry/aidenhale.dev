@@ -3,6 +3,9 @@
     {{ template "head" . }}
     <body>
         {{ template "header" . }}
+        <div class="prose prose-invert prose-pre:prose-slate max-w-full">
+            {{ .Body }}
+        </div>
         <div class="flex flex-col gap-4">
             {{ template "Articles" . }}
         </div>

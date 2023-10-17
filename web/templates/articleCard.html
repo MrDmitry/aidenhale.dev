@@ -1,0 +1,28 @@
+{{- block "articleCard" . }}
+<article
+    hx-boost="true"
+    class="bg-material-highlight rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl max-w-prose mx-auto"
+>
+    <div class="invisible"
+        {{- if .IsLast }}
+        hx-get="{{ .NextUrl }}"
+        hx-target="closest article"
+        hx-trigger="intersect once"
+        hx-swap="afterend"
+        {{- end }}
+    ></div>
+    {{- with .Article }}
+    <a href="{{ .Url }}">{{ .Title }}</a>
+    <time class="text-sm text-material-secondary text-opacity-50">{{ .Created.Format "2006 Jan 02" }}</time>
+    <span class="text-sm text-material-secondary text-opacity-80">{{ .WordCount }} words</span>
+    {{- if len .Tags }}
+        <div class="flex flex-row gap-2">
+            {{- range .Tags }}
+            <div class="bg-slate-400 rounded-md px-1 text-sm text-material-primary"><a href="/tags/{{ . }}">{{ . }}</a></div>
+            {{- end }}
+        </div>
+    {{- end }}
+    <div class="line-clamp-2">{{ .Summary }}</div>
+    {{- end }}
+</article>
+{{- end }}

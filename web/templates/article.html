@@ -3,6 +3,8 @@
     {{ template "head" . }}
     <body>
         {{ template "header" . }}
-        {{ .Body }}
+        <div class="prose prose-invert prose-pre:prose-slate max-w-full">
+            {{ .Body }}
+        </div>
     </body>
 </html>

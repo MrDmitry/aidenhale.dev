@@ -1,0 +1,14 @@
+@tailwind base;
+@layer base {
+    html {
+        @apply text-material-secondary;
+        @apply bg-material-primary;
+    }
+
+    body {
+        @apply container max-w-4xl mx-auto;
+        @apply overflow-y-scroll;
+    }
+}
+@tailwind components;
+@tailwind utilities;

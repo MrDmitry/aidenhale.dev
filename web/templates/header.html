@@ -1,13 +1,15 @@
 {{ block "header" . }}
 <header>
-    <nav hx-boost="true">
-        <ul>
-            {{ range .Nav.Items }}
-            <li>
-                <a href="{{ .Url }}">{{ .Name }}</a>
-            </li>
-            {{ end }}
-        </ul>
+    <nav hx-boost="true" class="flex flex-row justify-stretch gap-1">
+        <div>
+            <a href="/">Home</a>
+        </div>
+        <div class="flex-grow"></div>
+        {{ range .Nav.Items }}
+        <div>
+            <a href="{{ .Url }}">{{ .Name }}</a>
+        </div>
+        {{ end }}
     </nav>
 </header>
 {{ end }}

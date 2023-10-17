@@ -4,7 +4,9 @@
     <body>
         {{ template "header" . }}
         <div class="flex flex-col gap-4">
-            {{ template "Articles" . }}
+            {{ range .Articles }}
+                {{ template "articleCard" .}}
+            {{ end }}
         </div>
     </body>
 </html>
