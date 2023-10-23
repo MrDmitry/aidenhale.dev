@@ -2,6 +2,6 @@
 version = 0
 
 [Data]
-title = "Docker in-container software deployment"
+title = "In-container software deployment"
 created = 2023-09-01T23:00:00-04:00
 tags = ["docker"]

@@ -1,4 +1,4 @@
-# Quick dip into Yocto
+## Quick dip into Yocto
 
 If you're not familiar with [Yocto project](https://www.yoctoproject.org/software-overview/), it's a powerhouse for
 customized Linux systems fueled by the `bitbake` tool for the build management.
@@ -11,7 +11,7 @@ In the case of my current project, we know all the architectures and distributio
 Building from source would take too long and we couldn't efficiently share our build caches with them, so we decided
 to prototype a [pre-built](https://docs.yoctoproject.org/dev-manual/prebuilt-libraries.html) layer approach.
 
-# Pre-built layer
+## Pre-built layer
 
 My previous experience with pre-built libraries for Yocto was with a limited subset of proprietary vendor software, it
 never was a full layer. But it must be doable - after all, what is a layer if not a collection of libraries?

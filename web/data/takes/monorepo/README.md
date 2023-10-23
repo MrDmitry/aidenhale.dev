@@ -1,4 +1,4 @@
-# Monorepo is good
+## Monorepo is good
 
 If your repository is simple - monorepo is good.
 
@@ -12,14 +12,14 @@ If you want to _feel_ monorepo dev workflow without actually going monorepo you 
 * google's [repo tool](https://source.android.com/source/using-repo.html) and alternatives
 * `git submodule` if you're feeling frisky
 
-# Monorepo is bad
+## Monorepo is bad
 
 If you want to revert functional changes - monorepo is bad. But if you like resolving merge conflicts - it's good.
 
 If you want to express "release artifacts" through your repository (e.g. via tags) - monorepo is pretty bad. It forces
 a single digital heartbeat and doesn't leave much space for per-project release management.
 
-# Monorepo is ugly
+## Monorepo is ugly
 
 If your project has big PR throughput - monorepo is pretty ugly. But if it's enterprise you probably can afford PR
 merge orchestration to ensure that you can get as many non-conficting or easily-resolved PRs merged in a timely manner.
@@ -32,7 +32,7 @@ when you develop, but the more distributed the contributors are, the larger your
 dependencies get established, the harder it gets to iteratively improve legacy code base. Parts of your repository
 turn into zombies waiting to be replaced and deprecated.
 
-# What should I use?
+## What should I use?
 
 If you have to ask, you're in trouble, may as well choose at random.
 
@@ -78,7 +78,7 @@ There's no silver bullet, it's always some trade-off:
 * Do you want to gate the development of your dependency because of another component's flaky tests? Not really
 * Do you want to never run <insert test type>? Not really, I need to know when I fix downstream things
 
-# So how to CI with all of that?
+## So how to CI with all of that?
 
 I prefer to separate "development" and "integration" workflows.
 
@@ -122,7 +122,7 @@ You will still run your extended tests on a separate cadence (maybe even a rolli
 between the test runs), but for me it's easier to reason about "development" and "integration" as separate activities,
 and multi-repo just maps nicely to that.
 
-# Automated integration
+## Automated integration
 
 This is a tangent, but regardless of mono- or multi-repo setup, you can automate your integration to "always look at
 latest" and even update your dependencies automatically if you trust your tests enough. The difference to me is the

@@ -1,5 +1,3 @@
-# In-container docker deployment
-
 ## Overview
 
 This approach allows deploying software into a single docker image layer while minimizing installer footprint via
@@ -68,7 +66,6 @@ With no mounting capabilities, and with the `apt` side effects, the team decided
 deployment with a subsequent `docker commit` of the resulting container.
 
 ```bash
-
 $ docker images deploy
 REPOSITORY   TAG              IMAGE ID       CREATED         SIZE
 deploy       prototype        f827f2d58bff   4 seconds ago   1.34GB
@@ -150,7 +147,7 @@ inputs to the scripts:
 Based on that input, python script would prepare the workspace, deploy the software, test the image and push it to the
 registry for further validation.
 
-# Lessons learned
+## Lessons learned
 
 Overall this was a very positive experience. In a sense we re-implemented the `RUN --mount` command based on our own
 use cases, but I also learned a lot in the process. Using python instead of bash allowed us to contain the complexity

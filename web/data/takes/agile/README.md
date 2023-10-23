@@ -1,5 +1,7 @@
 # No true Agile
 
+## Introduction
+
 I've spent 8 years working under some manifestation of Agile methodology:
 * Kanban
 * Scrum
@@ -22,7 +24,7 @@ As with most popular things, the underlying values and ideas behind Agile are pr
 
 Cool values, but **apparently** everyone gets them wrong.
 
-# An illusion of work
+## An illusion of work
 
 One of the few things Agile excels at is generating endless burn charts that mean something to some people.
 
@@ -60,7 +62,7 @@ Do we really need to obfuscate decision making? _Committees know best!_
 
 Do we really need to gamify work to "make it engaging and motivating"? _But it's fun!_
 
-# A message to the shaman
+## A message to the shaman
 
 Stop treating your colleagues like kids.
 
@@ -76,7 +78,7 @@ encounter some problem and **stop working altogether** because now they have som
 Promote effective communications. Recognize when developer delivers something. Involve motivated people in design, let
 them feel a **part** of their project, not a **cog** in a machine.
 
-# A message to the managers
+## A message to the managers
 
 Stop micromanaging. I know how fun it is to "solve other people's problems", but you're not allowing people to grow.
 
@@ -94,7 +96,7 @@ your colleagues know what you can do.
 Don't be afraid to let people go. Don't abuse it, but if a person doesn't want to change or is not aligned with the
 team, it could be in everyone's best interest for them to find a different project.
 
-# A message to the devs
+## A message to the devs
 
 Be the change you want to see in your project.
 
