@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html>
-    {{ template "head" . }}
+    {{- template "head" . }}
     <body>
-        {{ template "header" . }}
-        <div class="prose prose-invert prose-pre:prose-slate max-w-full">
-            {{ .Body }}
+        {{- template "header" . }}
+        <div class="max-w-full flex justify-center">
+            <div class="prose prose-tokyo max-w-6xl my-28 p-28 bg-tokyo-dark-two">
+                {{- with .Article }}
+                <div class="text-sm text-white text-opacity-50 mb-3">
+                    <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
+                </div>
+                <h1>{{ .Title }}</h1>
+                <div class="flex flex-row gap-6 items-center my-14">
+                    {{- if len .Tags }}
+                        {{- template "tagsSnippet" .Tags }}
+                    {{- end }}
+                    <div class="text-sm text-white text-opacity-60">{{- .ReadTimeMinutes }} min read</div>
+                </div>
+                {{- end }}
+                {{ .Body }}
+            </div>
         </div>
     </body>
 </html>

@@ -2,9 +2,11 @@ package monke
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,13 +16,14 @@ import (
 
 // struct passed to the html template
 type Article struct {
-	Category   string // article category identifier
-	Root       string // filepath to the article root location
-	Id         string // human readable identifier
-	Url        string // article path
-	ReadmePath string // filepath to README.md with article contents
-	Summary    string // plain text summary
-	WordCount  int
+	Category        string // article category identifier
+	Root            string // filepath to the article root location
+	Id              string // human readable identifier
+	Url             string // article path
+	ReadmePath      string // filepath to README.md with article contents
+	Summary         string // plain text summary
+	WordCount       int
+	ReadTimeMinutes int
 
 	ArticleData
 }
@@ -87,10 +90,10 @@ func NewArticle(f string, c string, urlPrefix string) (*Article, error) {
 
 	wordCount := len(strings.Fields(string(summary)))
 
-	threshold := min(len(summary), 200)
+	const previewThreshold int = 256
+	threshold := min(len(summary), previewThreshold)
 	if threshold != len(summary) {
-		summary = summary[:threshold-3]
-		summary = append(summary, []byte("...")...)
+		summary = append(summary[:threshold-3], []byte("...")...)
 	}
 
 	article := new(Article)
@@ -102,6 +105,17 @@ func NewArticle(f string, c string, urlPrefix string) (*Article, error) {
 	article.Summary = string(summary)
 	article.ArticleData = meta.Data
 	article.WordCount = wordCount
+
+	const readingWpm float64 = 200
+	readTime, err := time.ParseDuration(
+		strconv.Itoa(
+			int(math.Ceil(float64(wordCount)/readingWpm))) + "m")
+
+	if err != nil {
+		readTime, _ = time.ParseDuration("2m")
+	}
+
+	article.ReadTimeMinutes = int(math.Ceil(readTime.Minutes()))
 
 	return article, nil
 }

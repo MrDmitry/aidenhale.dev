@@ -13,12 +13,18 @@ import (
 type ArticlePageData struct {
 	HeadSnippet
 
-	Nav  monke.NavData
-	Body template.HTML
+	Nav     monke.NavData
+	Article *monke.Article
+	Body    template.HTML
 }
 
 func ArticlePage(c echo.Context) error {
 	path := c.Request().URL.Path
+	article := monke.Db.Articles.GetArticle(c.Param("article"))
+	if article == nil {
+		return NotFoundPage(c)
+	}
+
 	readme := fmt.Sprintf("./web/data/%s/%s/README.md", c.Param("category"), c.Param("article"))
 	var body []byte = nil
 
@@ -31,6 +37,7 @@ func ArticlePage(c echo.Context) error {
 	return c.Render(200, "article.html", ArticlePageData{
 		HeadSnippet: NewHeadSnippet("Article"),
 		Nav:         monke.Nav,
+		Article:     article,
 		Body:        template.HTML(string(body)),
 	})
 }
