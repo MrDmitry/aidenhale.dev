@@ -71,7 +71,7 @@ func InitDb(r string) error {
 			}
 			articleId := item.Name()
 			articlePath := filepath.Join(categoryPath, articleId)
-			article, err := NewArticle(articlePath, category.Id, category.Url)
+			article, err := NewArticle(articlePath, category.Id, category.Url, category.Tags)
 			if err != nil {
 				log.Warnf("Failed to process article %s", articlePath)
 				continue

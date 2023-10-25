@@ -1,7 +1,12 @@
 {{- block "articleCard" . }}
 <article
     hx-boost="true"
-    class="bg-tokyo-dark-two px-12 py-12 pt-0 max-w-4xl mx-auto flex flex-col gap-7"
+    hx-get='{{- .Article.Url -}}'
+    hx-trigger="click"
+    hx-target="body"
+    hx-swap="innerHTML show:window:top"
+    hx-push-url="true"
+    class="cursor-pointer bg-tokyo-dark-two px-12 py-12 pt-0 w-full flex flex-col gap-7"
 >
     <div class="invisible"
         {{- if .IsLast }}
@@ -9,6 +14,7 @@
         hx-target="closest article"
         hx-trigger="revealed"
         hx-swap="afterend"
+        hx-push-url="false"
         {{- end }}
     ></div>
     {{- with .Article }}

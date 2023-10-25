@@ -1,5 +1,40 @@
-{{- block "Articles" . }}
-{{- range .Articles }}
-    {{- template "articleCard" . }}
-{{- end }}
-{{- end }}
+<div class="flex flex-col gap-5" id="hx-article-container">
+    {{- $page := int (.Url.Query.Get "page") }}
+    {{- if eq $page 0 }}
+    <div class="flex flex-wrap flex-row gap-5 w-full py-2 select-none justify-center align-middle sticky top-0 bg-tokyo-dark-one">
+        {{- $url := generateUrl $.Url "" }}
+        {{- $isCurrent := eq $.Url.RequestURI $url }}
+        <div
+            hx-trigger="click"
+            hx-target="#hx-article-container"
+            hx-swap="outerHTML"
+            {{- if not $isCurrent }}
+            hx-get='{{- generateUrl $.Url "" -}}'
+            hx-push-url='{{- generateUrl getRefererUrl "" -}}'
+            {{- end }}
+            class="cursor-pointer px-3 py-1 bg-tokyo-accent-six bg-opacity-0 hover:bg-opacity-10 text-sm text-tokyo-accent-six border border-tokyo-accent-six border-opacity-40 active:bg-opacity-0 active:border-opacity-100"
+        >all posts</div>
+        {{- range .Data.Tags }}
+        {{- $url = generateUrl $.Url . }}
+        {{- $isCurrent = eq $.Url.RequestURI $url }}
+        <div
+            hx-trigger="click"
+            hx-target="#hx-article-container"
+            hx-swap="outerHTML"
+        {{- if $isCurrent }}
+            hx-get='{{- generateUrl $.Url "" -}}'
+            hx-push-url='{{- generateUrl getRefererUrl "" -}}'
+            class="cursor-pointer px-3 py-1 bg-opacity-100 text-sm border border-tokyo-accent-five bg-tokyo-accent-five text-black border-opacity-0"
+        {{- else }}
+            hx-get="{{- $url -}}"
+            hx-push-url="{{- generateUrl getRefererUrl . -}}"
+            class="cursor-pointer px-3 py-1 bg-tokyo-accent-one bg-opacity-0 hover:bg-opacity-10 text-sm text-tokyo-accent-one border border-tokyo-accent-one border-opacity-40 active:bg-opacity-0 active:border-opacity-100"
+        {{- end }}
+        >
+            {{- . -}}
+        </div>
+        {{- end }}
+    </div>
+    {{- end }}
+    {{- template "ArticleList" .Data.Articles }}
+</div>

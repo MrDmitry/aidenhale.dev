@@ -10,11 +10,10 @@ import (
 )
 
 type HeadSnippet struct {
-	PageTitle string
-	GitRev    string
+	GitRev string
 }
 
-func NewHeadSnippet(t string) HeadSnippet {
+func NewHeadSnippet() HeadSnippet {
 	cmd := exec.Command("git", "rev-parse", "HEAD")
 	rev := strconv.FormatInt(time.Now().Unix(), 10)
 	out, err := cmd.Output()
@@ -24,7 +23,6 @@ func NewHeadSnippet(t string) HeadSnippet {
 		rev = strings.Trim(string(out), "\n")
 	}
 	return HeadSnippet{
-		PageTitle: t,
-		GitRev:    rev,
+		GitRev: rev,
 	}
 }

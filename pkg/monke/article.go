@@ -44,7 +44,7 @@ type ArticleToml struct {
 	Data ArticleData
 }
 
-func NewArticle(f string, c string, urlPrefix string) (*Article, error) {
+func NewArticle(f string, c string, urlPrefix string, tags []string) (*Article, error) {
 	dir, err := os.Open(f)
 	if err != nil {
 		log.Fatalf("Failed to open %s: %+v", f, err)
@@ -105,6 +105,18 @@ func NewArticle(f string, c string, urlPrefix string) (*Article, error) {
 	article.Summary = string(summary)
 	article.ArticleData = meta.Data
 	article.WordCount = wordCount
+
+	tagSet := make(map[string]bool)
+	for _, v := range article.Tags {
+		tagSet[v] = true
+	}
+
+	for _, v := range tags {
+		if tagSet[v] {
+			continue
+		}
+		article.Tags = append(article.Tags, v)
+	}
 
 	const readingWpm float64 = 200
 	readTime, err := time.ParseDuration(

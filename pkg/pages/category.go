@@ -9,10 +9,8 @@ import (
 )
 
 type CategoryPageData struct {
-	HeadSnippet
 	ArticlesSnippetData
 
-	Nav  monke.NavData
 	Body template.HTML
 }
 
@@ -27,8 +25,6 @@ func CategoryPage(c echo.Context) error {
 	body, _ := monke.RenderMarkdownToHTML(category.ReadmePath)
 
 	return c.Render(200, "category.html", CategoryPageData{
-		HeadSnippet:         NewHeadSnippet("Articles"),
-		Nav:                 monke.Nav,
 		Body:                template.HTML(string(body)),
 		ArticlesSnippetData: NewArticlesSnippetData(c, monke.ArticleFilter{Category: categoryId}),
 	})

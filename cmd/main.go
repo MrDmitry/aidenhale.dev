@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"net/http"
+	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -15,12 +18,95 @@ import (
 	pages "mrdmitry/blog/pkg/pages"
 )
 
+type TemplateEntry struct {
+	tmpl *template.Template
+	main string
+}
+
+func getUrlDummy() *url.URL {
+	return nil
+}
+
+func atoi(s string) int {
+	v, err := strconv.Atoi(s)
+
+	if err != nil {
+		return 0
+	}
+
+	return v
+}
+
+func generateUrl(u *url.URL, t string) string {
+	values := u.Query()
+	if len(t) > 0 {
+		values.Set("tag", t)
+	} else {
+		values.Del("tag")
+	}
+	values.Del("page")
+	if len(values) > 0 {
+		return fmt.Sprintf("%s?%s", u.Path, values.Encode())
+	} else {
+		return u.Path
+	}
+}
+
+func newTemplateEntry(ts []string, m string) TemplateEntry {
+	return TemplateEntry{
+		tmpl: template.Must(template.New(m).Funcs(template.FuncMap{
+			"getUrl":        getUrlDummy,
+			"getRefererUrl": getUrlDummy,
+			"int":           atoi,
+			"generateUrl":   generateUrl,
+		}).ParseFiles(ts...)),
+		main: m,
+	}
+
+}
+
 type BlogRenderer struct {
-	templates *template.Template
+	templates map[string]TemplateEntry
+}
+
+type dataWrapper struct {
+	pages.HeadSnippet
+
+	Url  *url.URL
+	Nav  monke.NavData
+	Data interface{}
 }
 
 func (t *BlogRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
+	entry, ok := t.templates[name]
+	if !ok {
+		log.Errorf("failed to find template %s", name)
+		return c.NoContent(500)
+	}
+	tmpl := entry.tmpl.Funcs(template.FuncMap{
+		"getUrl": func() *url.URL {
+			return c.Request().URL
+		},
+		"getRefererUrl": func() *url.URL {
+			referrer := c.Request().Referer()
+			if len(referrer) == 0 {
+				return nil
+			}
+
+			result, err := url.Parse(referrer)
+			if err != nil {
+				log.Warnf("bad referrer: %v", referrer)
+				return nil
+			}
+			return result
+		},
+	})
+	return tmpl.ExecuteTemplate(w, entry.main, dataWrapper{
+		HeadSnippet: pages.NewHeadSnippet(),
+		Url:         c.Request().URL,
+		Nav:         monke.Nav,
+		Data:        data,
+	})
 }
 
 var statics = map[string]string{
@@ -84,15 +170,38 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 }
 
 func main() {
-	tmpls, err := template.ParseGlob(
-		"./web/templates/*.html",
-	)
+	tmpls := make(map[string]TemplateEntry)
 
-	if err != nil {
-		log.Fatalf("could not load templates: %+v", err)
+	snippets := []string{
+		"./web/templates/articleCard.html",
+		"./web/templates/articleList.html",
+		"./web/templates/tagLabels.html",
 	}
 
-	err = monke.InitDb("./web/data")
+	tmpls["404.html"] = newTemplateEntry([]string{
+		"./web/templates/404.html",
+		"./web/templates/base.html",
+	}, "base.html")
+
+	tmpls["article.html"] = newTemplateEntry(
+		append([]string{
+			"./web/templates/article.html",
+			"./web/templates/base.html",
+		}, snippets...), "base.html")
+
+	tmpls["articles.html"] = newTemplateEntry(
+		append([]string{
+			"./web/templates/articles.html",
+		}, snippets...), "articles.html")
+
+	tmpls["index.html"] = newTemplateEntry(
+		append([]string{
+			"./web/templates/index.html",
+			"./web/templates/articles.html",
+			"./web/templates/base.html",
+		}, snippets...), "base.html")
+
+	err := monke.InitDb("./web/data")
 
 	if err != nil {
 		log.Fatalf("could not initialize database: %+v", err)
@@ -120,11 +229,8 @@ func main() {
 
 	e.GET("/", pages.IndexPage)
 	e.GET("/articles/", pages.ArticlesSnippet)
-	e.GET("/blog/:category/", pages.CategoryPage)
 	e.GET("/blog/:category/:article/", pages.ArticlePage)
 	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAsset)
-	e.GET("/tags/", pages.TagsPage)
-	e.GET("/tags/:tag/", pages.TagPage)
 
 	e.Logger.Fatal(e.Start(":31337"))
 }

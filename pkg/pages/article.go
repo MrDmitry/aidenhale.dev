@@ -11,9 +11,6 @@ import (
 )
 
 type ArticlePageData struct {
-	HeadSnippet
-
-	Nav     monke.NavData
 	Article *monke.Article
 	Body    template.HTML
 }
@@ -35,10 +32,8 @@ func ArticlePage(c echo.Context) error {
 	}
 
 	return c.Render(200, "article.html", ArticlePageData{
-		HeadSnippet: NewHeadSnippet("Article"),
-		Nav:         monke.Nav,
-		Article:     article,
-		Body:        template.HTML(string(body)),
+		Article: article,
+		Body:    template.HTML(string(body)),
 	})
 }
 

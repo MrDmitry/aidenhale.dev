@@ -26,6 +26,7 @@ type categoryMeta struct {
 
 type CategoryData struct {
 	Title string
+	Tags  []string
 }
 
 type CategoryToml struct {

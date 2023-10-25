@@ -49,7 +49,7 @@ func (db *ArticleLookup) Init(a []*Article) {
 	}
 }
 
-func (db ArticleLookup) GetArticles(filter ArticleFilter, limit int, offset int) []*Article {
+func (db *ArticleLookup) GetArticles(filter ArticleFilter, limit int, offset int) []*Article {
 	if limit < 1 {
 		limit = max(0, len(db.created)-offset)
 	}
@@ -80,11 +80,20 @@ func (db ArticleLookup) GetArticles(filter ArticleFilter, limit int, offset int)
 	return result
 }
 
-func (db ArticleLookup) GetArticle(id string) *Article {
+func (db *ArticleLookup) GetArticle(id string) *Article {
 	return db.index[id]
 }
 
-func (db ArticleLookup) GetTagsSizes() map[string]int {
+func (db *ArticleLookup) GetTags() []string {
+	result := make([]string, 0, len(db.tags))
+	for k := range db.tags {
+		result = append(result, k)
+	}
+	slices.Sort(result)
+	return result
+}
+
+func (db *ArticleLookup) GetTagsSizes() map[string]int {
 	result := make(map[string]int)
 	for k, v := range db.tags {
 		result[k] = len(v)

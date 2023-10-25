@@ -1,0 +1,16 @@
+{{- block "tagsSnippet" .}}
+{{- $currentTag := getUrl.Query.Get "tag" }}
+<div class="flex flex-row gap-3 not-prose">
+    {{- range . }}
+        <div
+        {{- if eq $currentTag . }}
+            class="block px-3 py-1 bg-opacity-100 text-sm border border-dashed border-tokyo-accent-five bg-tokyo-accent-five text-black border-opacity-0 select-none"
+        {{- else }}
+            class="block px-3 py-1 bg-tokyo-accent-one bg-opacity-0 text-sm text-tokyo-accent-one border border-dashed border-tokyo-accent-one border-opacity-40 select-none"
+        {{- end }}
+        >
+            {{- . -}}
+        </div>
+    {{- end }}
+</div>
+{{- end }}

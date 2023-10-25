@@ -9,6 +9,17 @@
         @apply container max-w-4xl mx-auto;
         @apply overflow-y-scroll;
     }
+
+    .extended-bg {
+        @apply relative;
+    }
+
+    .extended-bg:before {
+        @apply absolute -z-10;
+        @apply -top-32 -bottom-32 -left-28 -right-28;
+        content: "";
+        background: inherit;
+    }
 }
 @tailwind components;
 @layer components {

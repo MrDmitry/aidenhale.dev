@@ -17,28 +17,36 @@ type annotatedArticle struct {
 
 type ArticlesSnippetData struct {
 	Articles []annotatedArticle
+	Tags     []string
 }
 
 func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnippetData {
 	page := f.Page
 	limit := 4
+
 	articlesSrc := monke.Db.Articles.GetArticles(f, limit, limit*page)
 	if len(articlesSrc) == 0 {
 		return ArticlesSnippetData{Articles: nil}
 	}
+
 	articles := make([]annotatedArticle, 0, len(articlesSrc))
 	for _, a := range articlesSrc {
 		articles = append(articles, annotatedArticle{
 			Article: a,
 		})
 	}
+
 	lastArticle := &articles[len(articles)-1]
 	lastArticle.IsLast = true
+
 	nextUrl := f.ToUrlValues()
 	nextUrl.Set("page", strconv.Itoa(page+1))
+
 	lastArticle.NextUrl = fmt.Sprintf("/articles/?%s", nextUrl.Encode())
+
 	return ArticlesSnippetData{
 		Articles: articles,
+		Tags:     monke.Db.Articles.GetTags(),
 	}
 }
 
