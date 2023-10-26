@@ -2,10 +2,11 @@
 <article
     hx-boost="true"
     hx-get='{{- .Article.Url -}}'
-    hx-trigger="click"
+    hx-trigger="click delay:50ms"
     hx-target="body"
-    hx-swap="innerHTML show:window:top"
+    hx-swap="innerHTML show:window:top settle:0ms"
     hx-push-url="true"
+    hx-sync-enjoyer
     class="cursor-pointer bg-tokyo-dark-two px-12 py-12 pt-0 w-full flex flex-col gap-7"
 >
     <div class="invisible"
@@ -21,11 +22,11 @@
     <div class="text-sm text-white text-opacity-50 text-right">
         <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
     </div>
-    <div class="text-4xl text-white text-opacity-90 font-light"><a href="{{- .Url -}}">{{- .Title -}}</a></div>
+    <div class="text-4xl text-white text-opacity-90 font-light"><a href="{{- .Url -}}" hx-sync="closest [hx-sync-enjoyer]:abort">{{- .Title -}}</a></div>
     <div class="line-clamp-2 text-base text-white text-opacity-90">{{- .Summary -}}</div>
     <div class="flex flex-row gap-6 items-center">
-        {{- if len .Tags }}
-            {{- template "tagsSnippet" .Tags }}
+        {{- if len $.Tags.Tags }}
+            {{- template "tagLabels" $.Tags }}
         {{- end }}
         <div class="text-sm text-white text-opacity-60">{{- .ReadTimeMinutes }} min read</div>
     </div>

@@ -13,11 +13,12 @@ type annotatedArticle struct {
 	Article *monke.Article
 	IsLast  bool
 	NextUrl string
+	Tags    TagData
 }
 
 type ArticlesSnippetData struct {
 	Articles []annotatedArticle
-	Tags     []string
+	Tags     TagData
 }
 
 func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnippetData {
@@ -33,6 +34,7 @@ func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnipp
 	for _, a := range articlesSrc {
 		articles = append(articles, annotatedArticle{
 			Article: a,
+			Tags:    NewArticleTagData(a, f.Tag, false),
 		})
 	}
 
@@ -46,7 +48,7 @@ func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnipp
 
 	return ArticlesSnippetData{
 		Articles: articles,
-		Tags:     monke.Db.Articles.GetTags(),
+		Tags:     NewGlobalTagData(f.Tag, false),
 	}
 }
 

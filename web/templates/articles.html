@@ -10,11 +10,11 @@
             hx-swap="outerHTML"
             {{- if not $isCurrent }}
             hx-get='{{- generateUrl $.Url "" -}}'
-            hx-push-url='{{- generateUrl getRefererUrl "" -}}'
+            hx-push-url='/'
             {{- end }}
             class="cursor-pointer px-3 py-1 bg-tokyo-accent-six bg-opacity-0 hover:bg-opacity-10 text-sm text-tokyo-accent-six border border-tokyo-accent-six border-opacity-40 active:bg-opacity-0 active:border-opacity-100"
         >all posts</div>
-        {{- range .Data.Tags }}
+        {{- range .Data.Tags.Tags }}
         {{- $url = generateUrl $.Url . }}
         {{- $isCurrent = eq $.Url.RequestURI $url }}
         <div

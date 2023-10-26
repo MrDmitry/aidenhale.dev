@@ -5,7 +5,10 @@
         <link href="/css/style.css?rev={{ .GitRev }}" rel="stylesheet">
         <script src="/js/htmx.min.js"></script>
     </head>
-    <body>
+    <body hx-sync-enjoyer>
+        <script type="text/javascript">
+        htmx.config.scrollBehavior = "auto"
+        </script>
         <header>
             <nav hx-boost="true" class="flex flex-row justify-stretch gap-1">
                 <div>

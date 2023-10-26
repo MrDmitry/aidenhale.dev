@@ -13,6 +13,7 @@ import (
 type ArticlePageData struct {
 	Article *monke.Article
 	Body    template.HTML
+	Tags    TagData
 }
 
 func ArticlePage(c echo.Context) error {
@@ -34,6 +35,7 @@ func ArticlePage(c echo.Context) error {
 	return c.Render(200, "article.html", ArticlePageData{
 		Article: article,
 		Body:    template.HTML(string(body)),
+		Tags:    NewArticleTagData(article, "", true),
 	})
 }
 

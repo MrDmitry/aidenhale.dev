@@ -9,8 +9,8 @@
         </div>
         <h1>{{ .Title }}</h1>
         <div class="flex flex-row gap-6 items-center my-14">
-            {{- if len .Tags }}
-                {{- template "tagsSnippet" .Tags }}
+            {{- if len $.Tags.Tags }}
+                {{- template "tagLabels" $.Tags }}
             {{- end }}
             <div class="text-sm text-white text-opacity-60">{{- .ReadTimeMinutes }} min read</div>
         </div>

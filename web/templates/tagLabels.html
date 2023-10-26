@@ -1,16 +1,40 @@
-{{- block "tagsSnippet" .}}
-{{- $currentTag := getUrl.Query.Get "tag" }}
-<div class="flex flex-row gap-3 not-prose">
-    {{- range . }}
-        <div
-        {{- if eq $currentTag . }}
-            class="block px-3 py-1 bg-opacity-100 text-sm border border-dashed border-tokyo-accent-five bg-tokyo-accent-five text-black border-opacity-0 select-none"
-        {{- else }}
-            class="block px-3 py-1 bg-tokyo-accent-one bg-opacity-0 text-sm text-tokyo-accent-one border border-dashed border-tokyo-accent-one border-opacity-40 select-none"
-        {{- end }}
-        >
-            {{- . -}}
-        </div>
+{{- define "clickableTagLabels" }}
+<div class="flex flex-row gap-3 not-prose" hx-boost="true">
+    {{- range .Tags }}
+    <a href="/?tag={{ . }}"
+        hx-sync="closest [hx-sync-enjoyer]:abort"
+    {{- if eq $.CurrentTag . }}
+        class="block px-3 py-1 bg-opacity-100 bg-tokyo-accent-five text-sm text-black border border-dashed border-tokyo-accent-five border-opacity-0 select-none"
+    {{- else }}
+        class="block px-3 py-1 bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-0 bg-tokyo-accent-one text-sm text-tokyo-accent-one border border-opacity-40 active:border-opacity-100 border-tokyo-accent-one select-none"
+    {{- end }}
+    >
+        {{- . -}}
+    </a>
     {{- end }}
 </div>
+{{- end }}
+
+{{- define "basicTagLabels" }}
+<div class="flex flex-row gap-3 not-prose">
+    {{- range .Tags }}
+    <div
+    {{- if eq $.CurrentTag . }}
+        class="block px-3 py-1 bg-opacity-100 bg-tokyo-accent-five text-sm text-black select-none"
+    {{- else }}
+        class="block px-3 py-1 bg-opacity-0 bg-tokyo-accent-one text-sm text-tokyo-accent-one select-none"
+    {{- end }}
+    >
+        {{- . -}}
+    </div>
+    {{- end }}
+</div>
+{{- end }}
+
+{{- block "tagLabels" .}}
+    {{- if $.Clickable }}
+        {{- template "clickableTagLabels" . }}
+    {{- else }}
+        {{- template "basicTagLabels" . }}
+    {{- end }}
 {{- end }}
