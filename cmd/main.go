@@ -23,8 +23,13 @@ type TemplateEntry struct {
 	main string
 }
 
-func getUrlDummy() *url.URL {
-	return nil
+func newUrl(s string) *url.URL {
+	u, err := url.Parse(s)
+	if err != nil {
+		log.Errorf("failed to create url from %+v", s)
+		return nil
+	}
+	return u
 }
 
 func atoi(s string) int {
@@ -55,10 +60,9 @@ func generateUrl(u *url.URL, t string) string {
 func newTemplateEntry(ts []string, m string) TemplateEntry {
 	return TemplateEntry{
 		tmpl: template.Must(template.New(m).Funcs(template.FuncMap{
-			"getUrl":        getUrlDummy,
-			"getRefererUrl": getUrlDummy,
-			"int":           atoi,
-			"generateUrl":   generateUrl,
+			"newUrl":      newUrl,
+			"int":         atoi,
+			"generateUrl": generateUrl,
 		}).ParseFiles(ts...)),
 		main: m,
 	}
@@ -83,25 +87,7 @@ func (t *BlogRenderer) Render(w io.Writer, name string, data interface{}, c echo
 		log.Errorf("failed to find template %s", name)
 		return c.NoContent(500)
 	}
-	tmpl := entry.tmpl.Funcs(template.FuncMap{
-		"getUrl": func() *url.URL {
-			return c.Request().URL
-		},
-		"getRefererUrl": func() *url.URL {
-			referrer := c.Request().Referer()
-			if len(referrer) == 0 {
-				return nil
-			}
-
-			result, err := url.Parse(referrer)
-			if err != nil {
-				log.Warnf("bad referrer: %v", referrer)
-				return nil
-			}
-			return result
-		},
-	})
-	return tmpl.ExecuteTemplate(w, entry.main, dataWrapper{
+	return entry.tmpl.ExecuteTemplate(w, entry.main, dataWrapper{
 		HeadSnippet: pages.NewHeadSnippet(),
 		Url:         c.Request().URL,
 		Nav:         monke.Nav,
@@ -174,7 +160,6 @@ func main() {
 
 	snippets := []string{
 		"./web/templates/articleCard.html",
-		"./web/templates/articleList.html",
 		"./web/templates/tagLabels.html",
 	}
 
@@ -192,7 +177,8 @@ func main() {
 	tmpls["articles.html"] = newTemplateEntry(
 		append([]string{
 			"./web/templates/articles.html",
-		}, snippets...), "articles.html")
+			"./web/templates/articlesIndex.html",
+		}, snippets...), "articlesIndex.html")
 
 	tmpls["index.html"] = newTemplateEntry(
 		append([]string{

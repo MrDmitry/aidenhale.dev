@@ -2,7 +2,7 @@
 @layer base {
     html {
         @apply text-white text-opacity-90;
-        @apply bg-tokyo-dark-one;
+        @apply bg-tokyo-dark-two;
     }
 
     body {
@@ -17,6 +17,13 @@
     .extended-bg:before {
         @apply absolute -z-10;
         @apply -top-32 -bottom-32 -left-28 -right-28;
+        content: "";
+        background: inherit;
+    }
+
+    .extended-bg-sm:before {
+        @apply absolute -z-10;
+        @apply -top-12 -bottom-32 -left-28 -right-28;
         content: "";
         background: inherit;
     }

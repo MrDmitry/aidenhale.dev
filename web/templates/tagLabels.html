@@ -1,8 +1,7 @@
 {{- define "clickableTagLabels" }}
 <div class="flex flex-row gap-3 not-prose" hx-boost="true">
     {{- range .Tags }}
-    <a href="/?tag={{ . }}"
-        hx-sync="closest [hx-sync-enjoyer]:abort"
+    <a href="/?tag={{ . }}#blog"
     {{- if eq $.CurrentTag . }}
         class="block px-3 py-1 bg-opacity-100 bg-tokyo-accent-five text-sm text-black border border-dashed border-tokyo-accent-five border-opacity-0 select-none"
     {{- else }}

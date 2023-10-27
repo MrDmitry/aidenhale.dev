@@ -1,9 +1,10 @@
 {{- define "title" -}}Home{{- end -}}
 
 {{- define "body" }}
-<div class="invisible"
-    hx-get="/articles/?{{- getUrl.Query.Encode -}}"
-    hx-trigger="revealed"
-    hx-swap="outerHTML"
-></div>
+<div class="prose prose-tokyo min-w-full bg-tokyo-dark-one extended-bg extended-bg-sm" id="blog">
+    <h2>blog</h2>
+    <div class="not-prose">
+        {{- template "Articles" . }}
+    </div>
+</div>
 {{- end }}

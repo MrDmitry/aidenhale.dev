@@ -1,18 +1,13 @@
 {{- block "articleCard" . }}
-<article
+<a
     hx-boost="true"
-    hx-get='{{- .Article.Url -}}'
-    hx-trigger="click delay:50ms"
-    hx-target="body"
-    hx-swap="innerHTML show:window:top settle:0ms"
-    hx-push-url="true"
-    hx-sync-enjoyer
-    class="cursor-pointer bg-tokyo-dark-two px-12 py-12 pt-0 w-full flex flex-col gap-7"
+    href='{{- .Article.Url -}}'
+    class="block cursor-pointer bg-tokyo-accent-six bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-0 border border-tokyo-accent-six border-opacity-40 active:border-opacity-100 rounded-sm px-12 py-12 pt-0 w-full flex flex-col gap-6"
 >
     <div class="invisible"
         {{- if .IsLast }}
         hx-get="{{ .NextUrl }}"
-        hx-target="closest article"
+        hx-target="closest a"
         hx-trigger="revealed"
         hx-swap="afterend"
         hx-push-url="false"
@@ -22,7 +17,9 @@
     <div class="text-sm text-white text-opacity-50 text-right">
         <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
     </div>
-    <div class="text-4xl text-white text-opacity-90 font-light"><a href="{{- .Url -}}" hx-sync="closest [hx-sync-enjoyer]:abort">{{- .Title -}}</a></div>
+    <div class="text-4xl text-white text-opacity-90 font-light">
+        {{- .Title -}}
+    </div>
     <div class="line-clamp-2 text-base text-white text-opacity-90">{{- .Summary -}}</div>
     <div class="flex flex-row gap-6 items-center">
         {{- if len $.Tags.Tags }}
@@ -31,5 +28,5 @@
         <div class="text-sm text-white text-opacity-60">{{- .ReadTimeMinutes }} min read</div>
     </div>
     {{- end }}
-</article>
+</a>
 {{- end }}

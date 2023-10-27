@@ -19,6 +19,7 @@ type annotatedArticle struct {
 type ArticlesSnippetData struct {
 	Articles []annotatedArticle
 	Tags     TagData
+	Filter   monke.ArticleFilter
 }
 
 func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnippetData {
@@ -27,7 +28,7 @@ func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnipp
 
 	articlesSrc := monke.Db.Articles.GetArticles(f, limit, limit*page)
 	if len(articlesSrc) == 0 {
-		return ArticlesSnippetData{Articles: nil}
+		return ArticlesSnippetData{Articles: nil, Filter: f}
 	}
 
 	articles := make([]annotatedArticle, 0, len(articlesSrc))
@@ -49,6 +50,7 @@ func NewArticlesSnippetData(c echo.Context, f monke.ArticleFilter) ArticlesSnipp
 	return ArticlesSnippetData{
 		Articles: articles,
 		Tags:     NewGlobalTagData(f.Tag, false),
+		Filter:   f,
 	}
 }
 
