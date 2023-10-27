@@ -25,14 +25,14 @@ func InitDb(r string) error {
 
 	root, err := os.Open(r)
 	if err != nil {
-		log.Fatalf("Failed to load database from %s: %+v", r, err)
+		log.Fatalf("failed to load database from %s: %+v", r, err)
 		return err
 	}
 	defer root.Close()
 
 	contents, err := root.ReadDir(0)
 	if err != nil {
-		log.Fatalf("Failed to load database from %s: %+v", r, err)
+		log.Fatalf("failed to load database from %s: %+v", r, err)
 		return err
 	}
 
@@ -46,7 +46,7 @@ func InitDb(r string) error {
 		categoryPath := filepath.Join(r, item.Name())
 		category, err := NewCategory(categoryPath)
 		if err != nil {
-			log.Warnf("Failed to load category from %s: %+v", item.Name(), err)
+			log.Warnf("failed to load category from %s: %+v", item.Name(), err)
 			continue
 		}
 
@@ -54,14 +54,14 @@ func InitDb(r string) error {
 
 		dir, err := os.Open(categoryPath)
 		if err != nil {
-			log.Fatalf("Failed to open %s: %+v", categoryPath, err)
+			log.Fatalf("failed to open %s: %+v", categoryPath, err)
 			return err
 		}
 		defer dir.Close()
 
 		dirContents, err := dir.ReadDir(0)
 		if err != nil {
-			log.Fatalf("Failed to read contents of %s: %+v", categoryPath, err)
+			log.Fatalf("failed to read contents of %s: %+v", categoryPath, err)
 			return err
 		}
 
@@ -73,7 +73,7 @@ func InitDb(r string) error {
 			articlePath := filepath.Join(categoryPath, articleId)
 			article, err := NewArticle(articlePath, category.Id, category.Url, category.Tags)
 			if err != nil {
-				log.Warnf("Failed to process article %s", articlePath)
+				log.Warnf("failed to process article %s", articlePath)
 				continue
 			}
 			articles = append(articles, article)

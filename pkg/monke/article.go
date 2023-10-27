@@ -47,14 +47,14 @@ type ArticleToml struct {
 func NewArticle(f string, c string, urlPrefix string, tags []string) (*Article, error) {
 	dir, err := os.Open(f)
 	if err != nil {
-		log.Fatalf("Failed to open %s: %+v", f, err)
+		log.Fatalf("failed to open %s: %+v", f, err)
 		return nil, err
 	}
 	defer dir.Close()
 
 	_, err = dir.ReadDir(0)
 	if err != nil {
-		log.Fatalf("Failed to read %s: %+v", f, err)
+		log.Fatalf("failed to read %s: %+v", f, err)
 		return nil, err
 	}
 

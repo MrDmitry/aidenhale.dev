@@ -37,7 +37,7 @@ type CategoryToml struct {
 func NewCategory(f string) (*Category, error) {
 	dir, err := os.Open(f)
 	if err != nil {
-		log.Fatalf("Failed to open %s: %+v", f, err)
+		log.Fatalf("failed to open %s: %+v", f, err)
 		return nil, err
 	}
 	defer dir.Close()
@@ -67,7 +67,7 @@ func NewCategory(f string) (*Category, error) {
 	readmePath := path.Join(f, "README.md")
 	_, err = os.Open(readmePath)
 	if err != nil {
-		log.Warnf("Failed to open %s: %+v", readmePath, err)
+		log.Warnf("failed to open %s: %+v", readmePath, err)
 		readmePath = ""
 	}
 

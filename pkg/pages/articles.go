@@ -58,7 +58,7 @@ func ArticlesSnippet(c echo.Context) error {
 	var filter monke.ArticleFilter
 	err := c.Bind(&filter)
 	if err != nil {
-		log.Warnf("Failed to bind filter parameters: %+v", c.Request().URL)
+		log.Warnf("failed to bind filter parameters: %+v", c.Request().URL)
 		return c.NoContent(400)
 	}
 	return c.Render(200, "articles.html", NewArticlesSnippetData(c, filter))
