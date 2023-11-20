@@ -2,49 +2,110 @@
 @layer base {
     html {
         @apply text-white text-opacity-90;
-        @apply bg-tokyo-dark-two;
     }
 
     body {
-        @apply container max-w-4xl mx-auto;
         @apply overflow-y-scroll;
     }
 
     .extended-bg {
-        @apply relative;
+        box-shadow: 0 0 0 7rem var(--tw-shadow-color);
+        clip-path: inset(-3rem -7rem);
     }
 
-    .extended-bg:before {
-        @apply absolute -z-10;
-        @apply -top-32 -bottom-32 -left-28 -right-28;
-        content: "";
-        background: inherit;
+    .extended-bg-s {
+        box-shadow: 0 0 0 3rem var(--tw-shadow-color);
+        clip-path: inset(-3rem -4rem);
     }
 
-    .extended-bg-sm:before {
-        @apply absolute -z-10;
-        @apply -top-12 -bottom-32 -left-28 -right-28;
-        content: "";
-        background: inherit;
+    h1:not(.prose h1) {
+        @apply text-6xl font-light font-mono text-tokyo-accent-six;
+    }
+
+    h1:not(.prose h1):after {
+        @apply inline-block h-auto w-auto ml-0;
+        @apply animate-blink;
+        @apply bg-transparent;
+        content: '█';
+    }
+
+    h2:not(.prose h2) {
+        @apply inline-block relative;
+        @apply text-[2.65rem] font-light font-mono;
+        @apply mb-11;
+        line-height: normal;
+    }
+
+    h2:not(.prose h2):after {
+        @apply block absolute left-0 bottom-0;
+        @apply h-[2px] w-6/12;
+        @apply bg-white bg-opacity-90;
+        content: '';
+    }
+
+    h3 {
+        @apply text-[1.75rem] font-semibold font-sans text-white text-opacity-90;
+    }
+
+    nav a {
+        @apply text-[1rem] text-opacity-80 hover:text-opacity-100 text-white;
+        @apply no-underline;
+        @apply py-[6px] align-middle;
+        @apply border-b-[6px] border-transparent;
+        line-height: 150%;
+    }
+
+    .about img {
+        @apply hover:scale-125 transition duration-500 cursor-zoom-in object-contain md:object-cover
+    }
+
+    .home-icon {
+        @apply pl-7;
+        @apply bg-[url('/assets/home.svg')] hover:bg-[url('/assets/home_hover.svg')];
+        @apply bg-no-repeat bg-left;
+    }
+
+    nav .current-page {
+        @apply text-tokyo-accent-six;
+        @apply border-tokyo-accent-six;
+    }
+
+    nav .current-page:is(.home-icon) {
+        @apply bg-[url('/assets/home_active.svg')];
     }
 }
 @tailwind components;
 @layer components {
     .prose h1 {
-        @apply text-4xl text-white text-opacity-90 font-semibold;
-        @apply w-full;
+        @apply relative;
+        @apply text-[2.65rem] font-light font-mono;
+        @apply text-white text-opacity-90;
+        @apply mb-11;
+        line-height: normal;
     }
 
     .prose h2 {
         @apply w-full;
         @apply pt-5 border-t border-t-tokyo-accent-five;
-        @apply text-base uppercase;
-        @apply my-12;
+        @apply text-base uppercase font-semibold;
+        @apply mb-12 mt-12 md:mt-20 lg:mt-24;
+        letter-spacing: 0.8px;
+        line-height: normal;
+    }
+
+    .prose h2:first-of-type {
+        @apply md:mt-12 lg:mt-12
     }
 
     .prose h3 {
         @apply max-w-xl mx-auto;
         @apply text-2xl text-white text-opacity-90 font-semibold;
+        @apply mt-8 md:mt-16 lg:mt-20;
+    }
+
+    .prose a:not(.not-prose a) {
+        @apply hover:no-underline;
+        @apply hover:text-[#90DAFF] active:text-[#D6F1FF] visited:text-[#9375CA];
     }
 
     .prose p, .prose ul, .prose ol {
@@ -56,14 +117,17 @@
     }
 
     .prose p img {
-        @apply max-w-4xl;
-        @apply hover:scale-125 transition duration-500 cursor-zoom-in object-cover
+        @apply md:max-w-2xl lg:max-w-4xl;
+        @apply hover:scale-125 transition duration-500 cursor-zoom-in object-contain md:object-cover
     }
 
     .prose pre {
         border-radius: 0;
-        @apply overflow-clip;
+        @apply overflow-auto;
         @apply my-11;
+
+        box-shadow: 0 0 0 4rem var(--tw-prose-pre-bg);
+        clip-path: inset(-2rem -2rem);
     }
 }
 @tailwind utilities;

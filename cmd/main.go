@@ -18,9 +18,21 @@ import (
 	pages "mrdmitry/blog/pkg/pages"
 )
 
+type Background string
+
+const (
+	Dark  Background = "dark"
+	Light            = "light"
+)
+
+func (bg Background) String() string {
+	return string(bg)
+}
+
 type TemplateEntry struct {
 	tmpl *template.Template
 	main string
+	bg   Background
 }
 
 func newUrl(s string) *url.URL {
@@ -57,7 +69,7 @@ func generateUrl(u *url.URL, t string) string {
 	}
 }
 
-func newTemplateEntry(ts []string, m string) TemplateEntry {
+func newTemplateEntry(ts []string, m string, bg Background) TemplateEntry {
 	return TemplateEntry{
 		tmpl: template.Must(template.New(m).Funcs(template.FuncMap{
 			"newUrl":      newUrl,
@@ -65,6 +77,7 @@ func newTemplateEntry(ts []string, m string) TemplateEntry {
 			"generateUrl": generateUrl,
 		}).ParseFiles(ts...)),
 		main: m,
+		bg:   bg,
 	}
 
 }
@@ -76,23 +89,33 @@ type BlogRenderer struct {
 type dataWrapper struct {
 	pages.HeadSnippet
 
-	Url  *url.URL
-	Nav  monke.NavData
-	Data interface{}
+	Background string
+	Url        *url.URL
+	Data       interface{}
 }
 
-func (t *BlogRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	entry, ok := t.templates[name]
+func (r *BlogRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	entry, ok := r.templates[name]
 	if !ok {
 		log.Errorf("failed to find template %s", name)
 		return c.NoContent(500)
 	}
 	return entry.tmpl.ExecuteTemplate(w, entry.main, dataWrapper{
 		HeadSnippet: pages.NewHeadSnippet(),
+		Background:  entry.bg.String(),
 		Url:         c.Request().URL,
-		Nav:         monke.Nav,
 		Data:        data,
 	})
+}
+
+func customHTTPErrorHandler(err error, c echo.Context) {
+	code := http.StatusInternalServerError
+	if he, ok := err.(*echo.HTTPError); ok {
+		code = he.Code
+	}
+	c.Logger().Error(err)
+	errorPage := fmt.Sprintf("%d.html", code)
+	c.Render(code, errorPage, nil)
 }
 
 var statics = map[string]string{
@@ -163,37 +186,57 @@ func main() {
 		"./web/templates/tagLabels.html",
 	}
 
-	tmpls["404.html"] = newTemplateEntry([]string{
-		"./web/templates/404.html",
-		"./web/templates/base.html",
-	}, "base.html")
+	tmpls["404.html"] = newTemplateEntry(
+		[]string{
+			"./web/templates/404.html",
+			"./web/templates/base.html",
+		},
+		"base.html",
+		Light,
+	)
 
 	tmpls["article.html"] = newTemplateEntry(
 		append([]string{
 			"./web/templates/article.html",
 			"./web/templates/base.html",
-		}, snippets...), "base.html")
+		}, snippets...),
+		"base.html",
+		Dark,
+	)
 
 	tmpls["articles.html"] = newTemplateEntry(
 		append([]string{
 			"./web/templates/articles.html",
 			"./web/templates/articlesIndex.html",
-		}, snippets...), "articlesIndex.html")
+		}, snippets...),
+		"articlesIndex.html",
+		Light,
+	)
 
 	tmpls["index.html"] = newTemplateEntry(
 		append([]string{
 			"./web/templates/index.html",
 			"./web/templates/articles.html",
 			"./web/templates/base.html",
-		}, snippets...), "base.html")
+		}, snippets...),
+		"base.html",
+		Light,
+	)
+
+	tmpls["about.html"] = newTemplateEntry(
+		append([]string{
+			"./web/templates/about.html",
+			"./web/templates/base.html",
+		}, snippets...),
+		"base.html",
+		Light,
+	)
 
 	err := monke.InitDb("./web/data")
 
 	if err != nil {
 		log.Fatalf("could not initialize database: %+v", err)
 	}
-
-	monke.NavInit()
 
 	e := echo.New()
 	e.Renderer = &BlogRenderer{
@@ -213,7 +256,9 @@ func main() {
 		e.Static(k, v)
 	}
 
+	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.GET("/", pages.IndexPage)
+	e.GET("/about/", pages.StaticPage(200, "about.html"))
 	e.GET("/articles/", pages.ArticlesSnippet)
 	e.GET("/blog/:category/:article/", pages.ArticlePage)
 	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAsset)

@@ -3,7 +3,7 @@
     {{- $homeUrl := newUrl "/" }}
     {{- $articlesUrl := newUrl "/articles" }}
     {{- if eq .Filter.Page 0 }}
-    <div class="flex flex-wrap flex-row gap-5 w-full py-2 select-none justify-center align-middle sticky top-0 bg-tokyo-dark-one">
+    <div class="flex flex-wrap flex-row gap-5 w-full py-2 select-none align-middle sticky top-0 bg-tokyo-dark-one">
         {{- $url := generateUrl $articlesUrl "" }}
         {{- $isCurrent := eq $.Filter.Tag "" }}
         <div

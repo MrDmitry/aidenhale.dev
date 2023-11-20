@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Blog | {{ template "title" .Data }}</title>
+        <title>{{ template "title" .Data }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
         <link href="/css/style.css?rev={{ .GitRev }}" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
         <script src="/js/htmx.min.js"></script>
     </head>
-    <body>
+    <body class="min-w-[360px] bg-tokyo-dark-two">
         <script type="text/javascript">
-        htmx.config.scrollBehavior = "auto"
+            htmx.config.scrollBehavior = "auto"
         </script>
-        <header>
-            <nav hx-boost="true" class="flex flex-row justify-stretch gap-1">
-                <div>
-                    <a href="/">Home</a>
-                </div>
-                <div class="flex-grow"></div>
-                {{ range .Nav.Items }}
-                <div>
-                    <a href="{{ .Url }}">{{ .Name }}</a>
-                </div>
-                {{ end }}
-            </nav>
-        </header>
-        {{ template "body" .Data }}
+        <div class='{{- if eq .Background "dark" -}} bg-tokyo-dark-one {{- else -}} bg-tokyo-dark-two {{- end }} fixed left-0 top-0 right-0 bottom-0 -z-50'></div>
+        <div class='max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 md:px-0'>
+            <header>
+                <nav hx-boost="true" class="flex flex-row justify-end gap-12 py-5">
+                    <div>
+                        <a href="/" class='home-icon {{ if eq .Url.Path "/" -}} current-page {{- end }}'>blog</a>
+                    </div>
+                    <div>
+                        <a href="/about/" class='{{ if eq .Url.Path "/about/" -}} current-page {{- end }}'>about</a>
+                    </div>
+                </nav>
+            </header>
+            {{ template "body" .Data }}
+        </div>
     </body>
 </html>
 

@@ -1,0 +1,140 @@
+{{- define "title" -}}Aiden Hale | About{{- end -}}
+
+{{- define "body" }}
+<div class="text-center pt-12">
+    <h1>about me</h1>
+</div>
+<div class="py-12 min-w-full flex flex-col gap-12 about">
+    <div class="flex flex-col md:flex-row gap-12 md:gap-16 items-start">
+        <div><img src="/assets/me.jpeg" alt="Aiden Hale" width="432" height="288" /></div>
+        <div class="prose prose-tokyo">
+            <p>Hello, I'm Aiden! I'm a software engineer with a focus on backend, tooling and infrastructure.</p>
+
+            <p>I started my career in the web/app development back in 2009 and soon transitioned to embedded C++. I
+                learned a lot about working within limited ecosystems and how to work around the limitations via
+                tooling. I got to apply these things in a number of architecture-type gigs for major players in the
+                automotive industry. Eventually I got to create a greenfield build- and release-infrastructure project
+                for the next-gen toolchain for a major automotive manufacturer.</p>
+
+            <p>I am deeply passionate about improving the development process and experience. My focus is on developing
+                internal tools, streamlining processes through automation, fostering a supportive developer ecosystem,
+                and sharing knowledge through mentoring.</p>
+
+            <p>My goal for 2024 is to contribute to the broader developer community through open-source contributions
+                and streaming.</p>
+        </div>
+    </div>
+
+    <div class="prose prose-tokyo min-w-full bg-tokyo-dark-one p-12">
+        <h1>impact</h1>
+
+        <h2>2021-2023</h2>
+
+        <p>Key stakeholder and architect for Build & Packaging teams for a next-gen greenfield project of Major Automotive OEM:</p>
+        <ul>
+            <li>Collaborated with 3 downstream customer teams.</li>
+            <li>Co-designed release and migration processes.</li>
+            <li>Designed and developed custom plug and play release artifact generation tooling.</li>
+        </ul>
+
+        <p>Achieved efficiency improvements by:</p>
+        <ul>
+            <li>Championing and promoted Infrastructure as Code.</li>
+            <li>Automating vendor tooling deployment to Docker images.</li>
+            <li>Automating release engineer activities (branching, tagging, etc).</li>
+            <li>Implementing early integration pipelines to detect newly introduced issues.</li>
+            <li>Automating syntax backporting for zero-overhead delivery support for older toolchain versions.</li>
+        </ul>
+
+        <p>Reduced vendor tooling integration from 2 days to just over 4 hours.</p>
+
+        <p>Developed internal tools to support development workflows for ~200 engineers for a range of toolchains and target systems.</p>
+
+        <p>Secured dedicated bandwidth for the team to enhance workflows and infrastructure, beyond immediate request fulfillment.</p>
+
+        <h2>2015-2021</h2>
+
+        <p>Major contributor to a proprietary Human-Machine Interface (HMI) framework:</p>
+        <ul>
+            <li>Deployed code to over 500k cars worldwide.</li>
+            <li>Rolled out features to over 200k cars, primarily in the JAPAC region.</li>
+        </ul>
+
+        <p>Enhanced rendering pipeline performance, enabling new features for low-performing targets.</p>
+
+        <p>Optimized computation-heavy operations in the end-user project build pipeline, reducing build times for complex projects from several minutes to under a minute.</p>
+
+    </div>
+
+    <div class="prose prose-tokyo min-w-full bg-tokyo-dark-one p-12">
+        <h1>highlights</h1>
+        <h4>2023</h4>
+        <ul>
+            <li>Fully automated Internal Developer Platform, reducing Docker image generation time from 2 hours to 45 minutes.</li>
+            <li>Designed global infrastructure recovery mechanism, enabling CI and release restoration in 6 hours.</li>
+            <li>Integrated 2 Yocto-based toolchains for new customer team.</li>
+        </ul>
+
+        <h4>2022</h4>
+        <ul>
+            <li>Co-designed project-wide toolchain migration process for 5 embedded targets, 100+ repositories, and migration CI infrastructure.</li>
+            <li>Developed release delivery and integration mechanism for 3 downstream customers.</li>
+            <li>Extended Yocto-based integration model for a wider range of Yocto releases.</li>
+            <li>Integrated an additional Yocto-based toolchain.</li>
+        </ul>
+
+        <h4>2021</h4>
+        <ul>
+            <li>Deployed common CI pipeline for C++, TypeScript, and Python components.</li>
+            <li>Implemented basic automation for Internal Developer Platform generation.</li>
+            <li>Established Yocto-based integration model for project components.</li>
+        </ul>
+
+        <h4>2020</h4>
+        <ul>
+            <li>Conducted infotainment stack gap analysis.</li>
+            <li>Co-designed architecture for speech recognition subsystem.</li>
+            <li>Conducted market research in the automotive embedded setting.</li>
+            <li>Integrated Unreal Engine 4 with proprietary HMI framework.</li>
+        </ul>
+
+        <h4>2019</h4>
+        <ul>
+            <li>Optimized rendering pipeline for low-performance embedded targets.</li>
+            <li>Extended customer-facing Lua API with 3D rendering.</li>
+            <li>Developed reference driver assist rendering logic via Lua.</li>
+        </ul>
+
+        <h4>2018</h4>
+        <ul>
+            <li>Implemented different shading models for 3D rendering.</li>
+            <li>Extended GStreamer-based video rendering capabilities.</li>
+            <li>Implemented SVG 1.1 feature-compatible rendering pipeline.</li>
+            <li>Developed vector asset processing plugin.</li>
+        </ul>
+
+        <h4>2017</h4>
+        <ul>
+            <li>Implemented C++11 thread library features in a C++03-compatible SDK.</li>
+            <li>Implemented dithering algorithms for bitmap asset compression.</li>
+            <li>Extended shared memory capabilities of the proprietary HMI framework.</li>
+        </ul>
+
+        <h4>2016</h4>
+        <ul>
+            <li>Optimized rendering pipeline for OpenVG rendering.</li>
+            <li>Implemented graphics features for OpenGL rendering.</li>
+            <li>Debugged and fixed major stack smashing issue in a rendering pipeline.</li>
+            <li>Rewrote bitmap processing and compression plugin.</li>
+            <li>Created internal tools for crash analysis and replay capabilities.</li>
+        </ul>
+
+        <h4>2015</h4>
+        <ul>
+            <li>Developed Conditional Access System backend component.</li>
+            <li>Developed high-load C++ backend application with RESTful API.</li>
+            <li>Developed Python-based test modules for automated testing.</li>
+        </ul>
+    </div>
+</div>
+{{- end }}

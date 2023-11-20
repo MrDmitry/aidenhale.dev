@@ -1,14 +1,14 @@
-{{- define "title" -}}{{- .Article.Title -}}{{- end -}}
+{{- define "title" -}}{{- .Article.Title }} | Blog{{- end -}}
 
 {{- define "body" }}
 <div class="max-w-full min-w-full flex justify-center">
-    <div class="prose prose-tokyo min-w-full my-32 bg-tokyo-dark-two extended-bg">
+    <div class="prose prose-tokyo min-w-full my-12 lg:my-32 bg-tokyo-dark-two extended-bg shadow-tokyo-dark-two">
         {{- with .Article }}
-        <div class="text-sm text-white text-opacity-50 mb-3">
+        <div class="text-sm text-white text-opacity-50 mb-6">
             <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
         </div>
         <h1>{{ .Title }}</h1>
-        <div class="flex flex-row gap-6 items-center my-14">
+        <div class="flex flex-row gap-6 items-center">
             {{- if len $.Tags.Tags }}
                 {{- template "tagLabels" $.Tags }}
             {{- end }}

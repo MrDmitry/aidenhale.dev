@@ -2,7 +2,7 @@
 <a
     hx-boost="true"
     href='{{- .Article.Url -}}'
-    class="block cursor-pointer bg-tokyo-accent-six bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-0 border border-tokyo-accent-six border-opacity-40 active:border-opacity-100 rounded-sm px-12 py-12 pt-0 w-full flex flex-col gap-6"
+    class="block cursor-pointer bg-tokyo-accent-six bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-0 border border-tokyo-accent-six border-opacity-40 active:border-opacity-100 rounded-sm px-6 md:px-12 pb-6 md:pb-12 pt-0 mx-auto w-full md:w-10/12 flex flex-col gap-6"
 >
     <div class="invisible"
         {{- if .IsLast }}
@@ -17,11 +17,11 @@
     <div class="text-sm text-white text-opacity-50 text-right">
         <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
     </div>
-    <div class="text-4xl text-white text-opacity-90 font-light">
+    <div class="text-3xl text-white text-opacity-90 font-light">
         {{- .Title -}}
     </div>
-    <div class="line-clamp-2 text-base text-white text-opacity-90">{{- .Summary -}}</div>
-    <div class="flex flex-row gap-6 items-center">
+    <div class="line-clamp-3 lg:line-clamp-2 text-base text-white text-opacity-90">{{- .Summary -}}</div>
+    <div class="flex flex-row flex-wrap gap-6 items-center not-prose">
         {{- if len $.Tags.Tags }}
             {{- template "tagLabels" $.Tags }}
         {{- end }}

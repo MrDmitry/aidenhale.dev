@@ -1,7 +1,22 @@
-{{- define "title" -}}Home{{- end -}}
+{{- define "title" -}}Aiden Hale | Blog{{- end -}}
 
 {{- define "body" }}
-<div class="prose prose-tokyo min-w-full bg-tokyo-dark-one extended-bg extended-bg-sm" id="blog">
+<div class="py-12 md:py-36 min-w-full flex flex-col md:flex-row gap-12 md:gap-24 align-middle items-start md:items-center">
+    <div class="max-w-fit whitespace-nowrap"><h1>aiden<br/>hale</h1></div>
+    <div class="max-w-max">
+        <div class="grid grid-rows-2 md:grid-rows-1 grid-cols-1 md:grid-cols-2 max-h-64 gap-8">
+            <div>
+                Software engineer specializing in tools and infrastructure.
+                I worked in webdev, app development, embedded automotive and CI/CD systems.
+            </div>
+            <div>
+                This website is a collection of thoughts and notes I've written in the past few years, mostly for my own amusement.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="min-w-full bg-tokyo-dark-one extended-bg shadow-tokyo-dark-one my-14" id="blog">
     <h2>blog</h2>
     <div class="not-prose">
         {{- template "Articles" . }}

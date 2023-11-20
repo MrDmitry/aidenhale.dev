@@ -5,5 +5,5 @@ import (
 )
 
 func NotFoundPage(c echo.Context) error {
-	return c.Render(404, "404.html", nil)
+	return StaticPage(404, "404.html")(c)
 }
