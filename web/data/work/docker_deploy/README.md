@@ -1,38 +1,36 @@
+## Problem
+
+We needed to efficiently deploy and distribute a rapidly evolving toolchain including a third-party vendor SDK,
+tooling, and additional development tools and libraries. The resulting Docker image was intended for use by hundreds of
+developers and in-cloud build agents, with an initial update cadence is estimated to be 2-3 times a week.
+
 ## Overview
 
-This approach allows deploying software into a single docker image layer while minimizing installer footprint via
-volume mounts.
-
-Most of the time packages can be deployed through `Dockerfile` directly or, if additional preparations are required,
-through multi-stage deployment.
-
-But in some cases, usually with proprietary software, you only have a self-installing wizard script.
-
-Even if such script supports headless installation, it may have system-wide side effects making it close to impossible
-to multi-stage copy the necessary installed artifacts.
+While the additional tools and libraries could easily be installed via `Dockerfile` directly or via multi-stage, the
+challenge lay in the third-party vendor SDK and tooling, which utilized a self-installing wizard script.
 
 At the time, experimental feature of `BuildKit` allowed temporary bind-mounts via `RUN --mount` but due to corporate
 policy we were not allowed to use `BuildKit` to ensure consistent `Dockerfile` syntax and usability.
 
+We decided to experiment with in-container deployment via `docker run` with `docker commit` once ready. Such approach
+allows deploying software into a single docker image layer while minimizing installer footprint via volume mounts.
+
 ## Background
 
-A vendor provided several archives with inputs for several platform-specific toolchains:
+Vendor SDK utilized independent archives for several platform-specific toolchains, suggesting modularity to the
+deployment process:
 * `common-tools.tar.gz`
 * `platform-A.tar.gz`
 * `platform-B.tar.gz`
 
-Platform-specific archives are installed on top of common tooling, already suggesting some level of modularity to our
-installation.
-
-Platform-specific archives can be deployed via multi-stage since they do not have any side effects, but common tools
-contain a self-installing wizard script with some additional archives.
+Platform-specific archives were installable through a multi-stage deployment, but the common tools included a
+self-installing wizard script with additional archives.
 
 ## Baseline for future comparison
 
-To evaluate how effective our attempts are, we gathered the initial metrics of `Dockerfile`-based deployment by calling
-the wizard from an [expect](https://linux.die.net/man/1/expect) script.
-
-Results looked something like this:
+To evaluate how effective our attempts are, we measured the naive `Dockerfile`-based deployment by calling the wizard
+from an [expect](https://linux.die.net/man/1/expect) script, revealing approximately **30%** (653MB) of wasted space
+due to the unnecessary copy of the installer and its archives:
 ```bash
 $ docker images deploy
 REPOSITORY   TAG        IMAGE ID       CREATED         SIZE
@@ -47,24 +45,19 @@ cc72face2225   22 seconds ago   /bin/sh -c #(nop) WORKDIR /opt                  
 ...
 ```
 
-We know that there's at least **~30%** (653MB) of wasted space due to copying of the installer and its archives.
-
 ## Wizard analysis
 
-Installer script performed a combination of `apt` installations (controlled by the vendor) as well as extracting
-companion archives to a vendor location. Some installation steps prompted for user input via `read` and did not support
-`noninteractive` frontend configuration.
+Installer script combined `apt` installations (controlled by the vendor) with companion archives extractions to a
+vendor location. Some installation steps prompted for user input via `read` and did not support `noninteractive`
+frontend configuration. `apt` installations required `sudo` access (as per vendor implementation), while some packages
+are installed to `~/.local`, creating non-portability issues for users with different UIDs among developers.
 
-`apt` installations require `sudo` access (as per vendor implementation), while other packages are installed to
-`~/.local`.
-
-Maintaining vendor-controlled installation endpoint is not maintainable. Vendor agreed to make the process more
-configurable for headless installation, but the size of the installer was >500M that would be captured by an
+Maintaining vendor-controlled installation endpoint was considered unfeasible. Vendor agreed to make the process more
+configurable for headless installation, but the size of the installer was over 500M and that would be captured by an
 intermediate image layer even if removed immediately after.
 
-With no mounting capabilities, and with the `apt` side effects, the team decided to proceed with in-container
-deployment with a subsequent `docker commit` of the resulting container.
-
+We proceeded with the prototype, utilizing the `expect` script as an entry point to the `docker run` with the installer
+directory mounted to the container runtime:
 ```bash
 $ docker images deploy
 REPOSITORY   TAG              IMAGE ID       CREATED         SIZE
@@ -83,14 +76,14 @@ This prototype removed the unwanted `COPY` of the installer package and we've re
 
 ### Iterating on the prototype
 
-Even though the main problem was resolved, there were runtime issues discovered, they were mostly related to how
-non-portable the vendor software is:
+The main problem was resolved, but we discovered some runtime issues that were related to the non-portability of the
+vendor software:
 * Developers use different UIDs (necessary UID shimming is done on the client side)
-* Vendor software is installed (and usable) only for the UID at the time of installation
-* Some additional configuration was required
+* The installed vendor software usable only for the installing user UID
+* Additional configuration is required on the client side
 
-An easy workaround of `chmod -R g=u` solved portability (ensuring that shimming adds the GID of the baked-in user) and,
-coupled with additional configuration via another Dockerfile, it effectively doubled the image size:
+An easy workaround of `chmod -R g=u` solved portability (ensuring that shimming adds the GID of the default user) and,
+coupled with additional configuration via another `Dockerfile`, it effectively doubled the image size:
 ```bash
 $ docker images deploy
 REPOSITORY   TAG               IMAGE ID       CREATED          SIZE
@@ -107,59 +100,65 @@ cc72face2225   45 minutes ago   /bin/sh -c #(nop) WORKDIR /opt                  
 ...
 ```
 
-This was expected, since image layers are additive and any file attribute change results in a copy of that file.
+This was expected since image layers are additive and any file attribute changes result in a copy of that file. Even if
+this is done on the client side, it would result in several minutes wasted every time there's a new image to be
+configured.
 
-The only way to address this would be to perform any file modifications in the same layer the files are created. This
-significantly increases the complexity of our installation scripts inviting re-evaluation of the whole approach.
+The only way to address this would be to perform any file modifications in the same layer where the files are created.
+This significantly increased the complexity of our installation scripts, prompting us to re-evaluate the approach.
 
 ### Re-evaluating the approach
 
 Using `expect` script to watch the installation wizard proved relatively easy, [Tcl](https://en.wikipedia.org/wiki/Tcl)
-language is rather easy to pick up.
+language is rather easy to pick up. However we discovered that the script needs to perform both post- and pre-install
+operations (and these should not bleed into the final image).
 
-However we discovered that we needed to perform not only post-install operations, but pre-install as well (but these
-should not bleed into the final image).
-
-Given the control we needed over the in-container temporary image reconfiguration, I decided to use `python` instead of
-`bash`. This also gave us the flexibility to drop `expect` dependency from the target image and bring it to the host
-environment - as [pexpect](https://pexpect.readthedocs.io/en/stable/) python module.
+We decided to rewrite the prototype in `python` and replace the in-image dependency on the `expect` tool to host
+dependency on the [pexpect](https://pexpect.readthedocs.io/en/stable/) python module.
 
 ## Python automation
 
-In addition to creating a wrapper for Docker container runtime, we decided to separate the deployment in 3 phases:
-- `prepare` to process the input files (a few tarballs) and prepare the work environment for deployment
-- `deploy` to perform deployment-related actions
+In addition to creating a wrapper for the Docker container runtime, we separated the deployment to 3 phases:
+- `prepare` to process the input files (a few tarballs) and prepare the host environment for deployment
+- `deploy` to perform in-container deployment-related actions
 - `test` to run basic sanity checks to ensure the installed tools are usable
 
 First iteration had an overloaded user interface with ~10 parameters, most of which had default values and would rarely
-be specified by the user. In the future iterations we moved some of these to be task-specific variables and simplified
+be specified by the user. In the future iterations we moved some of these parameters to be task-specific and simplified
 the interface significantly, so the user only had to specify 1-3 parameters.
 
 Platform-specific tasks were separated to independent python modules that are dynamically imported based on user input.
 
 This in turn enabled straight-forward CI/CD automation of Docker image deployment. The automation job specified the
 inputs to the scripts:
-* Task to run
-* Tag of base Docker image to be used
-* Tag of target Docker image to be generated
-* List of input files to be downloaded from file server(s)
+* task to run
+* tag of the base Docker image to be used
+* tag of the target Docker image to be generated
+* list of the input files to be downloaded from file server(s)
 
-Based on that input, python script would prepare the workspace, deploy the software, test the image and push it to the
-registry for further validation.
+Based on that input, python script prepared the workspace, deployed the software, tested the generated image and pushed
+it to the registry for further validation.
 
 ## Lessons learned
 
 Overall this was a very positive experience. In a sense we re-implemented the `RUN --mount` command based on our own
-use cases, but I also learned a lot in the process. Using python instead of bash allowed us to contain the complexity
-of the scripts so that any developer could pick up any part of the deployment process and maintain this script
-ecosystem with maximum reusability. Would it be possible in bash? Yes. Should you do it in bash? No.
+use cases, and learned a lot in the process. Using `python` instead of `bash` allowed us to contain the complexity of
+the scripts so that any developer could pick up any part of the deployment process and maintain this script ecosystem
+with maximum reusability.
+
+Would this be possible in bash? Yes. Should you do it in bash? No.
 
 The first iteration of the tool was running great for about a year and was used to migrate through 4 major updates of
-the vendor tooling. I ~~rewrote~~ refactored these scripts for better maintainability and improved CI/CD automation of
-image deployment. This second iteration improved quality of life for state management of the in-container bash session:
-* ephemeral credential, environment variable and proxy configuration usage based on host system configuration without
-in-image contamination
-* custom [context managers](https://docs.python.org/3/library/stdtypes.html#typecontextmanager) for managing proxy
-settings as well as `sudo` scope
-* added [argparse subparsers](https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers)
+the vendor tooling. I ~~rewrote~~ refactored most of the tool for better maintainability and improved CI/CD automation
+of image deployment. This second iteration improved quality of life for state management of the in-container bash
+session:
+* ephemeral credential, environment variable and proxy configuration usage mounted from the host
+* custom [context managers](https://docs.python.org/3/library/stdtypes.html#typecontextmanager) for managing network
+proxy settings as well as limiting the `sudo` scope
+* switched to [argparse subparsers](https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers)
 to allow per-task parameters instead of the catch-all interface of "all possible customizable settings"
+
+The tool exceeded my expectations, as we were able to meet several goals that were initially considered unlikely:
+* maximize layer reusability to minimize downloads on toolchain updates
+* control how image layers are split to allow parallel downloads
+* simplify migration acitivities for major toolchain upgrades

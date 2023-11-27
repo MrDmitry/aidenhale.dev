@@ -23,7 +23,7 @@ All changed on a rainy spring Monday morning in 2022. I saw an email from one of
 new team; the email was sent to both orgs (~400 developers) and had a patch file (!?) attached with a hefty
 `-300, +1200` LOC change. But the worst part was not the patch, it was the email.
 
-> _"This provides a better developer experience"_
+> This provides a better developer experience
 
 I shuddered.
 
@@ -61,8 +61,8 @@ I didn't realize it for quite some time, but I designed tools to play nice with 
 
 I decoupled modules to be reused to ensure tools behave in a predictable manner and I have less code to maintain.
 
-I piped data around, I `tee`'d data and fed it to other tools, I `parallel`'d calls not because I designed tools for it,
-but because that always met some project goal:
+I piped data around, I `tee`'d data and fed it to other tools, I `parallel`'d calls. I did it not because I designed my
+tools for it, but because that always met some project goal:
 * generate forensics
 * keep intermediate files for analysis and recovery
 * keep tools simple to maintain
