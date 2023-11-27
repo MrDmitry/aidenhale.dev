@@ -2,6 +2,7 @@ package monke
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -18,11 +19,11 @@ type customHTMLRenderHookData struct {
 	prefix string
 }
 
-// `hx-boost` updates the history only after a request to an <img src="./..."/> fails with 404 (requesting an asset
-// from the old URL path) but I want to keep using `hx-boost` so I gotta hack it
 func customHTMLRenderHook(data *customHTMLRenderHookData) html.RenderNodeFunc {
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if image, ok := node.(*ast.Image); ok && image.Destination[0] == '.' {
+			// `hx-boost` updates the history only after a request to an <img src="./..."/> fails with 404 (requesting an asset
+			// from the old URL path) but I want to keep using `hx-boost` so I gotta hack the full URL resolution
 			relPath := path.Join(data.prefix, string(image.Destination))
 			result, err := filepath.Abs(relPath)
 
@@ -31,6 +32,9 @@ func customHTMLRenderHook(data *customHTMLRenderHookData) html.RenderNodeFunc {
 			} else {
 				log.Warnf("failed to resolve absolute path for %s: %+v", relPath, err)
 			}
+		} else if heading, ok := node.(*ast.Heading); ok && !entering {
+			// add a copyable hyperlink after headings
+			io.WriteString(w, fmt.Sprintf("<a href=\"#%s\">§</a>", heading.HeadingID))
 		}
 		return ast.GoToNext, false
 	}

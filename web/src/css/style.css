@@ -100,7 +100,7 @@
     .prose h3 {
         @apply max-w-xl mx-auto;
         @apply text-2xl text-white text-opacity-90 font-semibold;
-        @apply mt-8 md:mt-16 lg:mt-20;
+        @apply mt-6 md:mt-12 lg:mt-16;
     }
 
     .prose a:not(.not-prose a) {
@@ -128,6 +128,16 @@
 
         box-shadow: 0 0 0 4rem var(--tw-prose-pre-bg);
         clip-path: inset(-2rem -2rem);
+    }
+
+    .prose :is(h1, h2, h3, h4, h5) a:not(.not-prose a) {
+        @apply pl-1;
+        @apply opacity-0 text-white hover:text-white active:text-white visited:text-white text-opacity-80 hover:text-opacity-100;
+        @apply no-underline hover:no-underline active:no-underline;
+    }
+
+    .prose :is(h1, h2, h3, h4, h5):hover a:not(.not-prose a) {
+        @apply opacity-100;
     }
 }
 @tailwind utilities;
