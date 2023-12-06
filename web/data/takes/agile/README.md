@@ -1,5 +1,3 @@
-# No true Agile
-
 ## Introduction
 
 I've spent 8 years working under some manifestation of Agile methodology:
@@ -12,7 +10,7 @@ All of these years I had some [Agile shaman](https://grugbrain.dev/#grug-on-Agil
 management how much the team did. There was always more boasting than actual work completed.
 
 Every time I criticized Agile, even in a constructive manner "_that specific thing just didn't work for us_", I got to
-hear the staple "well you just didn't Agile right". Ugh.
+hear the "well you just didn't Agile right".
 
 As with most popular things, the underlying values and ideas behind Agile are pretty cool:
 * learn what your user wants
@@ -69,7 +67,7 @@ Stop treating your colleagues like kids.
 You want to motivate developers? Give them clear goals, interesting problems, involve them in decision-making,
 recognize their work.
 
-You want people talking to each other - let them try. Don't "facilitate" their communication - it's extremely important
+You want people to talk to each other - let them try. Don't "facilitate" their communication - it's extremely important
 for people to learn when and how to reach out to other people.
 
 Every "Agile" project I worked at had a problem of people "collecting things for the stand-up". They do some work,
@@ -80,7 +78,7 @@ them feel a **part** of their project, not a **cog** in a machine.
 
 ## A message to the managers
 
-Stop micromanaging. I know how fun it is to "solve other people's problems", but you're not allowing people to grow.
+Stop micromanaging. I know how fun it is to "solve other people's problems", but you're not allowing your team to grow.
 
 Identify champions in the team. Involve them when there are battles to be had:
 * when you're pressed on technical details, involve your technical champion
@@ -94,29 +92,30 @@ Give and gather feedback. Listen to concerns, collect ideas, resolve conflicts. 
 your colleagues know what you can do.
 
 Don't be afraid to let people go. Don't abuse it, but if a person doesn't want to change or is not aligned with the
-team, it could be in everyone's best interest for them to find a different project.
+team, it could be in everyone's best interest for them to ~~become somebody else's problem~~ find a different team.
 
 ## A message to the devs
 
-Be the change you want to see in your project.
+Learn when to take responsibility and when to let others take it.
 
 Don't treat your work like a "clock-in / clock-out" - you spend half the day with your colleagues, promote good vibes.
 
 Stop "just kicking the can down the road" even if your shaman tells you to. Always look at a bigger picture when
-kicking the can - you want to kick it in the right direction.
+kicking the can - at the very least kick it in the right direction.
 
-Let your manager know if you want interesting problems (or if you're not 
+Let your manager know if you want interesting problems (or if you're not interested in problems you're working on).
 
 Let your manager know if you want to do things "outside of your role" (public speaking, conferences, open source).
 
-Ask for clarifications if something is not clear, don't wait and guess.
+Ask for clarifications if something is not clear, don't wait it out.
 
-Ask for help without waiting for "the next stand-up". Offer help when able.
+Ask for help without waiting for "the next stand-up". Also offer help when able.
 
-Speak up if you don't like something about your work. Don't vent, just talk to those in charge, be it shaman or manager.
+Speak up if you don't like something about your work. Don't vent, just talk to those in charge, be it a shaman or a
+manager.
 
 If you're in senior/lead/architect position - allocate time for emails. If you don't want to attend some meeting,
 suggest resolving it via email and provide your inputs immediately. Quite often an email is enough, but even if not -
 you're already driving the conversation where you want it.
 
-Learn when to take responsibility and when to let others take it.
+Be the change you want to see in your project.
