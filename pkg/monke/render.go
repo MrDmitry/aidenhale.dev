@@ -34,7 +34,7 @@ func customHTMLRenderHook(data *customHTMLRenderHookData) html.RenderNodeFunc {
 			}
 		} else if heading, ok := node.(*ast.Heading); ok && !entering {
 			// add a copyable hyperlink after headings
-			io.WriteString(w, fmt.Sprintf("<a href=\"#%s\">§</a>", heading.HeadingID))
+			io.WriteString(w, fmt.Sprintf("<a href=\"#%s\">#</a>", heading.HeadingID))
 		}
 		return ast.GoToNext, false
 	}
