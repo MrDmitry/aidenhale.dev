@@ -105,7 +105,7 @@
 
     .prose a:not(.not-prose a) {
         @apply hover:no-underline;
-        @apply hover:text-[#90DAFF] active:text-[#D6F1FF] visited:text-[#9375CA];
+        @apply hover:text-[#90DAFF] active:text-[#D6F1FF] visited:text-[var(--tw-prose-links)];
     }
 
     .prose p, .prose ul, .prose ol {

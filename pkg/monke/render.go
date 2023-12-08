@@ -47,7 +47,7 @@ func mdToHTML(md []byte, absPrefix string) []byte {
 	doc := p.Parse(md)
 
 	// create HTML renderer with extensions
-	htmlFlags := html.CommonFlags | html.HrefTargetBlank | html.LazyLoadImages
+	htmlFlags := html.HrefTargetBlank | html.LazyLoadImages
 	opts := html.RendererOptions{
 		Flags:          htmlFlags,
 		RenderNodeHook: customHTMLRenderHook(&customHTMLRenderHookData{prefix: absPrefix}),
@@ -98,12 +98,6 @@ func textRenderer() html.RenderNodeFunc {
 		case *ast.Emph:
 			break
 		case *ast.Strong:
-			break
-		case *ast.BlockQuote:
-			break
-		case *ast.Link:
-			break
-		case *ast.Citation:
 			break
 		case *ast.Subscript:
 			break
