@@ -20,7 +20,7 @@ type ArticlePageData struct {
 
 func ArticleAppendixPage(c echo.Context) error {
 	path := c.Request().URL.Path
-	article := monke.Db.Articles.GetArticle(c.Param("article"))
+	article := monke.Db.Articles.GetArticle(c.Param("category"), c.Param("article"))
 	if article == nil {
 		return NotFoundPage(c)
 	}
@@ -54,7 +54,7 @@ func ArticleAppendixPage(c echo.Context) error {
 
 func ArticlePage(c echo.Context) error {
 	path := c.Request().URL.Path
-	article := monke.Db.Articles.GetArticle(c.Param("article"))
+	article := monke.Db.Articles.GetArticle(c.Param("category"), c.Param("article"))
 	if article == nil {
 		return NotFoundPage(c)
 	}

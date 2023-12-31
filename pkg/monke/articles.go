@@ -8,7 +8,7 @@ import (
 
 type ArticleLookup struct {
 	created    []*Article            // list of articles ordered by their created date, descending
-	index      map[string]*Article   // map of articles by their identifiers
+	index      map[string]*Article   // map of articles by a unique combination of category and article identifier
 	categories map[string][]*Article // map of articles by their category
 	tags       map[string][]*Article // map of articles by their tags
 }
@@ -30,6 +30,10 @@ func (f ArticleFilter) ToUrlValues() url.Values {
 	return params
 }
 
+func generateArticleId(category string, id string) string {
+	return category + "/" + id
+}
+
 func (db *ArticleLookup) Init(a []*Article) {
 	db.created = a
 	db.index = make(map[string]*Article)
@@ -41,7 +45,7 @@ func (db *ArticleLookup) Init(a []*Article) {
 	})
 
 	for _, article := range db.created {
-		db.index[article.Id] = article
+		db.index[generateArticleId(article.Category, article.Id)] = article
 		db.categories[article.Category] = append(db.categories[article.Category], article)
 		for _, tag := range article.Tags {
 			db.tags[tag] = append(db.tags[tag], article)
@@ -80,8 +84,8 @@ func (db *ArticleLookup) GetArticles(filter ArticleFilter, limit int, offset int
 	return result
 }
 
-func (db *ArticleLookup) GetArticle(id string) *Article {
-	return db.index[id]
+func (db *ArticleLookup) GetArticle(category string, id string) *Article {
+	return db.index[generateArticleId(category, id)]
 }
 
 func (db *ArticleLookup) GetTags() []string {
