@@ -204,6 +204,15 @@ func main() {
 		Dark,
 	)
 
+	tmpls["articleExtra.html"] = newTemplateEntry(
+		append([]string{
+			"./web/templates/articleExtra.html",
+			"./web/templates/base.html",
+		}, snippets...),
+		"base.html",
+		Light,
+	)
+
 	tmpls["articles.html"] = newTemplateEntry(
 		append([]string{
 			"./web/templates/articles.html",
@@ -261,6 +270,7 @@ func main() {
 	e.GET("/about/", pages.StaticPage(200, "about.html"))
 	e.GET("/articles/", pages.ArticlesSnippet)
 	e.GET("/blog/:category/:article/", pages.ArticlePage)
+	e.GET("/blog/:category/:article/extra/:extra/", pages.ArticleAppendixPage)
 	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAsset)
 
 	e.Logger.Fatal(e.Start(":31337"))

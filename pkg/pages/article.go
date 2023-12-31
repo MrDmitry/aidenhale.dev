@@ -11,9 +11,45 @@ import (
 )
 
 type ArticlePageData struct {
-	Article *monke.Article
-	Body    template.HTML
-	Tags    TagData
+	Article  *monke.Article
+	Title    string
+	Body     template.HTML
+	Tags     TagData
+	ExtraKey string
+}
+
+func ArticleAppendixPage(c echo.Context) error {
+	path := c.Request().URL.Path
+	article := monke.Db.Articles.GetArticle(c.Param("article"))
+	if article == nil {
+		return NotFoundPage(c)
+	}
+
+	extraKey := c.Param("extra")
+	extra, ok := article.Extras[extraKey]
+	if ok == false {
+		return NotFoundPage(c)
+	}
+
+	readme := fmt.Sprintf("./web/data/%s/%s/extra/%s/README.md",
+		c.Param("category"),
+		c.Param("article"),
+		extraKey,
+	)
+	var body []byte = nil
+
+	body, err := monke.RenderMarkdownToHTMLAbs(readme, path)
+
+	if err != nil {
+		return NotFoundPage(c)
+	}
+
+	return c.Render(200, "articleExtra.html", ArticlePageData{
+		Article:  article,
+		Title:    extra.Title,
+		Body:     template.HTML(string(body)),
+		ExtraKey: extraKey,
+	})
 }
 
 func ArticlePage(c echo.Context) error {
@@ -34,6 +70,7 @@ func ArticlePage(c echo.Context) error {
 
 	return c.Render(200, "article.html", ArticlePageData{
 		Article: article,
+		Title:   article.Title,
 		Body:    template.HTML(string(body)),
 		Tags:    NewArticleTagData(article, "", true),
 	})

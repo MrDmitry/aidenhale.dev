@@ -36,6 +36,11 @@ type ArticleData struct {
 	Title   string
 	Created time.Time
 	Tags    []string
+	Extras  map[string]ArticleExtra
+}
+
+type ArticleExtra struct {
+	Title string
 }
 
 // struct for toml unmarshalling

@@ -1,0 +1,16 @@
+{{- define "title" -}}{{- .Title }} | {{ .Article.Title }} | Blog{{- end -}}
+
+{{- define "body" }}
+<div class="max-w-full min-w-full flex justify-center">
+    <div class="prose prose-tokyo min-w-full my-12 lg:my-32 bg-tokyo-dark-one extended-bg shadow-tokyo-dark-one">
+        {{- with .Article }}
+        <div class="text-sm text-white text-opacity-50 mb-6">
+            <time>{{- .Created.Format "Jan 02, 2006" -}}</time>
+        </div>
+        <a href="{{- .Url -}}#{{- $.ExtraKey -}}">{{- .Title -}}</a>
+        <h1>{{- $.Title -}}</h1>
+        {{- end }}
+        {{ .Body }}
+    </div>
+</div>
+{{- end }}
