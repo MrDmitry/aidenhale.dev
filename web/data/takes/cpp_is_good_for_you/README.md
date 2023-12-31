@@ -60,7 +60,7 @@ with all kinds of race conditions, out-of-order packet processing, out-of-sync d
 think of. However, that's how I learned about race conditions, memory safety, and how singletons needed to be
 initialized before a thread is started or each thread _may_ create its own instance!
 
-Where was I? Oh yes, "the right way". And so you chip away at that leaking and crashing monstrocity of a backend and you
+Where was I? Oh yes, "the right way". And so you chip away at that leaking and crashing monstrosity of a backend and you
 start asking yourself _Is there a better way of doing this?_ And you search the internet and stumble onto some rare gem
 from a person who knows what they're doing, like the great
 [beej.us](https://web.archive.org/web/20121207020445/https://beej.us/) _(I miss the web design from that era of
@@ -202,7 +202,7 @@ To me it's one of the best system languages there are - love it or hate it but c
 to do anything in _some specific way_. All features are opt-in and you get to work directly with all c and c++ libraries
 that exist (and being one of the original system languages, there are plenty), no bindings, glue or wrappers necessary.
 
-Even though absense of some "c++ way" leads to big annoyances, like external dependency management and build system
+Even though absence of some "c++ way" leads to big annoyances, like external dependency management and build system
 configuration, these are hurdles that you get to overcome **once or twice** and then find and iterate on "your way" of
 doing it. There are also many tools helping you bridge these gaps, including `zig build` as your build system, but
 that's for a different kind of article.

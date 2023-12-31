@@ -161,4 +161,4 @@ to allow per-task parameters instead of the catch-all interface of "all possible
 The tool exceeded my expectations, as we were able to meet several goals that were initially considered unlikely:
 * maximize layer reusability to minimize downloads on toolchain updates
 * control how image layers are split to allow parallel downloads
-* simplify migration acitivities for major toolchain upgrades
+* simplify migration activities for major toolchain upgrades

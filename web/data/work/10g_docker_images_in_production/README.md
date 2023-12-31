@@ -121,14 +121,14 @@ within a day, most of the time spent would be rebuilding from scratch the runtim
 
 ## Limitations
 
-Editor integration was a bit tricky. With VMs it's straighforward - you just settle on working from the VM. With Docker
+Editor integration was a bit tricky. With VMs it's straightforward - you just settle on working from the VM. With Docker
 you want some flexibility. There are suggested approaches for
 [VSCode](https://code.visualstudio.com/docs/devcontainers/containers) and
 [Neovim](https://github.com/jamestthompson3/nvim-remote-containers) but they are tricky to set up if you want to share
 your host configuration.
 
 Alternatively you could create a local shim image that would install the editor of your liking inside the Docker image,
-as well as any additional tools it needs (e.g. LSP) and reuse your host configuration for persistency. This is also a
+as well as any additional tools it needs (e.g. LSP) and reuse your host configuration for persistence. This is also a
 bit clunky since you need to make sure that everything relevant is mounted to your container and that your container
 will not contaminate your plugins with container-specific paths (e.g. your swap history, plugin-specific caches, etc).
 

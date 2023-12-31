@@ -15,7 +15,7 @@ hear the "well you just didn't Agile right".
 As with most popular things, the underlying values and ideas behind Agile are pretty cool:
 * learn what your user wants
 * don't lock yourself into bad decisions, be flexible
-* try delivering frequently, it helps to idenify bad decisions
+* try delivering frequently, it helps to identify bad decisions
 * talk to management, not only devs
 * empower colleagues
 * take some time to reflect on your workflows

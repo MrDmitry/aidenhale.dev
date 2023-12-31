@@ -78,14 +78,14 @@ to the user via installed headers
 * some domain-specific build-time dependencies were not transitive as well, as they were statically linked
 
 We tried automating the detection, but we were always defeated by some edge case that was already present in our
-delivery, for example there'd be a manually maintained CMake package template `XXXConfig.cmake.in` that would
+delivery, for example there would be a manually maintained CMake package template `XXXConfig.cmake.in` that would
 explicitly call `find_package(XYZ REQUIRED)`. This template was then used as a source for the installed CMake package
 configuration. Nothing in the package configuration would tell us that this is not just a runtime dependency, but also
 a build-time dependency. `bitbake` simply falls back to cascading `-dev` package dependencies because it doesn't
 need to know any better, and it's rather cheap to generate hard links in the host environment.
 
 Eventually we settled on adding filtering configuration to exclude arbitrary patterns from arbitrary fields. Looking
-closely at `bitabake`-generated metadata also gave us better insights on dependencies, and we were able to create a
+closely at `bitbake`-generated metadata also gave us better insights on dependencies, and we were able to create a
 stable configuration, even though it required some minimal maintenance to ensure the filtering behaved as expected.
 
 ## Rewrite
@@ -103,7 +103,7 @@ that utilized original recipe files, but switching to a single template uncovere
 
 ### Dependencies are hard
 
-Initially we considered build-time dependencies to not be important for the pre-builts, after all as long as you can
+Initially we considered build-time dependencies to not be important for the prebuilts, after all as long as you can
 extract it, no extra dependencies are needed. But that's not necessarily true for `-dev` packages, as they most
 definitely are build-only dependencies. It'd be extremely complex for us to try and analyze build-time dependencies of
 any `-dev` package that we generated - the dependency could be in a `XXXConfig.cmake` module, or in any other
@@ -112,7 +112,7 @@ fine control over the `DEPENDS` parameter of the generated recipes.
 
 ### Sometimes flexibility is worse
 
-We chose to keep a manifest of recipes that were allowed to be packaged for pre-builts. It was a bit annoying to
+We chose to keep a manifest of recipes that were allowed to be packaged for prebuilts. It was a bit annoying to
 maintain, but overall new recipes are not added on a daily basis, so at worst the manifest will be updated the
 following day, whenever automated tests start failing. Potentially we could organize our layers in some particular
 format (e.g. utilizing some phony `.bbclass` to _tag_ a recipe for prebuilt generation), but this would be rather
@@ -123,7 +123,7 @@ from any other layer.
 
 We used a custom `.bbclass` to extract our "staging" tarball respecting the symbolic links and any other custom
 deployment rules. This approach allowed our customers to override any paths if they needed, for example some of our
-customers utilized `lib64` directory while others insited on `lib` used even on 64-bit systems. Now they could override
+customers utilized `lib64` directory while others insisted on `lib` used even on 64-bit systems. Now they could override
 the `.bbclass` with their own implementation to ensure that their rules are followed regardless of our tarball layout.
 
 Preparing a full layer for pre-built integration is unviable - there always are build-only packages that should not be

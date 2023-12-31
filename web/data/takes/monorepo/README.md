@@ -22,7 +22,7 @@ a single digital heartbeat and doesn't leave much space for per-project release 
 ## Monorepo is ugly
 
 If your project has big PR throughput - monorepo is pretty ugly. But if it's enterprise you probably can afford PR
-merge orchestration to ensure that you can get as many non-conficting or easily-resolved PRs merged in a timely manner.
+merge orchestration to ensure that you can get as many non-conflicting or easily-resolved PRs merged in a timely manner.
 
 If your ecosystem doesn't allow in-tree/exported package resolution - monorepo is ugly. You need to manage dependencies
 in your CI to properly cascade the checks for projects that depend on your change.
@@ -140,5 +140,5 @@ It it pretty? No. Especially the submodules.
 Is it easy to manage? Manually - annoying; automated - same as monorepo.
 
 But it's much easier to reason about "integration" when it is separate from "development". And I'm not advocating for
-"manual integration" or "big bang integration" or any other monicker of "future me will handle it", I'm only separating
+"manual integration" or "big bang integration" or any other moniker of "future me will handle it", I'm only separating
 integration onto its own timeline, when compared with a monorepo it will barely affect the "feature delivery" timeline.

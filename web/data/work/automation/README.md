@@ -18,7 +18,7 @@
 
 I was tasked with designing a Continuous Integration (CI) system for a middleware project. The scale of the project was
 bigger than what I used to work with, so I decided to be a bit more thorough in my design:
-* Embedded stack targetting at least 3 different operating systems
+* Embedded stack targeting at least 3 different operating systems
 * Project consists of up to 100 individual components
 * Over 300 developers contributing directly to the project
 * Over 1000 developers consuming the middleware and integrating it into their toolchains
@@ -101,7 +101,7 @@ use them as such.
 
 ### Acknowledged limitations
 
-There are always edge cases that automation smoothes over, but the limitations stay there, even if they are not as
+There are always edge cases that automation smooths over, but the limitations stay there, even if they are not as
 obvious.
 
 Consider automating a release process for several inter-connected projects. You may want to tag the release candidate
@@ -124,8 +124,9 @@ stakeholders what specifically is automated, and what is the extent of such auto
 
 ## GOAT design framework
 
-I wanted a silly acronym for this framework, so I went with GOAT - Goal-Oriented Automation Toolkit. To create a GOATed
-automation you need to address two main parts:
+I wanted a silly acronym for this framework, so I went with GOAT - Goal-Oriented Automation Toolkit.
+
+To create a GOATed automation you need to address two main parts:
 * How to **approach a problem** with automation in mind?
 * How to **design** an individual automated process?
 
@@ -165,7 +166,7 @@ blocks that enable the pipeline to achieve its goal. Try not to frame every proc
 goal.
 
 <a name="example_design_flow"></a>
-See [Example design flow](./extra/example_design_flow/) for hands-on example.
+See [Example GOATed design flow](./extra/example_design_flow/) for hands-on example.
 
 ## Applying this approach in practice
 
@@ -187,7 +188,7 @@ breaking changes and tightly couples development with integration. It can be a v
 that it would work for the current project.
 
 While I was wrapping my mind around the core values of automation, I hacked together some intermediate jobs to satisfy
-some urgent requests from opinionated staleholders. I briefed them about the limitations of these jobs, specifically how
+some urgent requests from opinionated stakeholders. I briefed them about the limitations of these jobs, specifically how
 they shape the development process:
 * Integrated builds as **required** PR gates slow down the development, as integration of breaking changes would have to
   be done in-sync with the changes themselves, or with external topic-branch synchronization that requires coordinated
@@ -242,7 +243,7 @@ easy: identify what is different from what's done already, and reframe the reque
 Having the "input-output-goal" framing improved the communications dramatically. A lot is said about "shared
 vocabularies" between stakeholders, but I was an outsider in the project. Asking the opinionated stakeholders about the
 nature of their requests, pushing back on the _"just do the same thing they did for their project"_ and ensuring a
-common understanding of what we're trying to achive for _our project_ made it possible to **avoid mistakes**. It's a
+common understanding of what we're trying to achieve for _our project_ made it possible to **avoid mistakes**. It's a
 common pitfall to jump to known solutions, but you have to make sure that those solutions actually reflect **your
 problem**. _The other project_ had their own challenges and limitations, _our project_ was greenfield and did not
 inherit those either challenges or limitations, but instead we had our own.
