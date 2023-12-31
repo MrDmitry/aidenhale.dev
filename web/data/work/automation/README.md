@@ -1,19 +1,3 @@
-## Table of contents
-
-- [Background](#background)
-- [Goal](#goal)
-- [What is automation?](#what-is-automation)
-- [Core values](#core-values)
-  - [Scoped goal](#scoped-goal)
-  - [Acknowledged limitations](#acknowledged-limitations)
-  - [Iteration on goals and limitations](#iteration-on-goals-and-limitations)
-- [GOAT design framework](#goat-design-framework)
-  - [Approaching the problem](#approaching-the-problem)
-  - [Designing an automated process](#designing-an-automated-process)
-- [Applying this approach in practice](#applying-this-approach-in-practice)
-- [Achievements](#achievements)
-- [Lessons learned](#lessons-learned)
-
 ## Background
 
 I was tasked with designing a Continuous Integration (CI) system for a middleware project. The scale of the project was
@@ -52,6 +36,17 @@ Main audience for this article are infrastructure engineers and their managers. 
 software engineer who wants to reflect on values and core principles automation revolves around, as it often means
 different things to different people, often becoming a catch-all for _"I don't need to do X locally, automation will
 take care of it."_
+
+## Table of contents
+
+- [What is automation?](#what-is-automation)
+- [Core values](#core-values)
+- [GOAT design framework](#goat-design-framework)
+- [Putting the GOAT into action](#putting-the-goat-into-action)
+- [Eliminating automation SMEs](#eliminating-automation-smes)
+- [Healthy ecosystem](#healthy-ecosystem)
+- [Achievements](#achievements)
+- [Lessons learned](#lessons-learned)
 
 ## What is automation?
 
@@ -168,7 +163,7 @@ goal.
 <a name="example_design_flow"></a>
 See [Example GOATed design flow](./extra/example_design_flow/) for hands-on example.
 
-## Applying this approach in practice
+## Putting the GOAT into action
 
 Having a clear purpose for all automation jobs made it easy to communicate with stakeholders and reason about the
 unsolicited suggestions. For historic reasons, there was an expectation that CI system could be inherited from the
@@ -207,32 +202,64 @@ automation pipeline specifically for that goal.
 All in all, this approach proved to be a success. Even though I had to tweak my design to make it more robust and to
 enable the extended set of validation, the core values and the GOAT framework itself did not change at all.
 
+## Eliminating automation SMEs
+
+Ensuring that automation is kept "flat" (most of automated processes are self-contained and there's little crossover
+between automated pipelines) and any problem can be pigeonholed into an appropriate pipeline (and then process), ensures
+that we don't need "automation subject-matter experts". I have nothing against SMEs in general, but I reject the idea
+that everything has to have an SME - automation is not establishing any _new things_ for the project, it merely
+automates something that is already known and used. It should not be a complex area that requires some arcane knowledge
+of what's-done-where.
+
+The actual SMEs are not the engineers who automated the process, but those who established the original workflow - their
+competence should not be hijacked by the person implementing the automated approach. It's very common that person
+implementing automation lacks subject-matter knowledge to assess failures of the very process they are automating.
+
+For some reason this was a point of contention in my project, any automated job failure instinctively would be sent for
+triage to my team even though we rarely had anything to do with the failure. It took some months to explain that only a
+small subset of infrastructure issues can be triaged by my team, the actual observed failures should instead be
+redirected to SMEs of the failing components. It seems that management often assumes that responsibility is transferred
+together with the automation, even when it's not.
+
+## Healthy ecosystem
+
+This is purely subjective, but I was very happy to see how component SMEs stepped in to improve the automation. Ensuring
+that automation does not distance engineers from the delivery provided a new engagement vector for some stakeholders -
+they stepped forward with optimizing certain parts of our integration pipelines, they suggested how early integration
+activities could be improved, they even developed additional tools to be used by all teams to ensure automation failures
+are easier to triage.
+
+Making automation easy to approach and staying open to contributions from developers further minimized the gap between
+automation and developer workflows.
+
 ## Achievements
 
 The performance of the end system was astounding. There were some challenges on the implementation side to ensure we
-took advantage of build caches, but when the dust settled other teams reached out to us asking for our lessons learned
-and how they could achieve our level of performance:
-* No-change integrated system build times reduced from **3 hours** to **15 minutes** (**~90%** reduction)
-* Standalone PR builds reduced from **2 hours** to **30 minutes** (**~75%** reduction)
-* Early integration pipeline required no oversight, with over 95% of component revision updates being successful, 1% of
-  revision updates requiring some developer input to tweak the recipe (e.g. introducing new build-time dependencies) and
-  4% of revision updates requiring an extra update because the problem would be solved solely within component
-  repository. To stay close-to-HEAD this pipeline required about **1 hour per week** of manual oversight, in contrast to
-  a dedicated engineer assigned to manage this for `main` as well as release branches (**~95%** reduction in efforts)
-* Integrated system release builds, on average, reduced from **3 hours** to **40 minutes** (**~80%** reduction) enabling
-  daily release candidate iteration, including validation
-* Automated release pipeline required minimal engineer oversight of **1 hour per RC**, in contrast to a dedicated
-  release engineer position (**~95%** reduction in efforts)
+took advantage of the build caches, but once we figured it out, other projects reached out to us asking for our lessons
+learned and how they could achieve our level of performance:
+* **90%** reduction in no-change integrated system build times (from **3 hours** to **15 minutes**)
+* **75%** reduction in standalone PR build times (from **2 hours** to **30 minutes**)
+* **95%** effort reduction from early integration pipeline requiring no oversight:
+  * over 95% of component revision updates being successful
+  * 1% of revision updates requiring some developer input to tweak the recipe (e.g. introducing new build-time
+    dependencies)
+  * 4% of revision updates requiring an extra revision update once the problem is solved within the component repository
+  * staying close-to-HEAD required about **1 hour per week** of manual oversight, in contrast to a dedicated engineer
+    assigned to manage this for `main` as well as release branches
+* **80%** reduction in integrated system release build times (on average reduced from **3 hours** to **40 minutes**)
+  enabling daily release candidate iteration, including validation
+* **95%** effort reduction from automated release pipeline requiring minimal engineer oversight of **1 hour per RC**, in
+  contrast to a dedicated release engineer position
 * Engineers relieved by automation were reassigned to tooling and system engineering activities, further improving our
   infrastructure
 
 ## Lessons learned
 
-It's a bit challenging to reminisce on this topic, as I don't think I uncovered anything revolutionary or new even. I
-ventured into an established field that was unknown to me, I understood why and how the CI systems are the way they are.
-I do not think I arrived at the same destination though. I feel like the system I designed is much more light-weight and
-_honest_ with the stakeholders. The documentation for it was also straightforward - it was just stating what each
-automated process aims to achieve, what it takes as inputs and what it produces as outputs.
+It's a bit challenging to reminisce on this topic, as I don't think I uncovered anything revolutionary or even new. I
+ventured into an established field that _was unknown to me_, I understood why and how the CI systems are _the way they
+are_. I do not think I arrived at the same destination though. I feel like the system I designed is much more
+light-weight and _honest_ with the stakeholders. The documentation for it was also straightforward - it was just stating
+what each automated process aims to achieve, what it takes as inputs and what it produces as outputs.
 
 Since the CI system was pretty light-weight (the only complex processes had to do with integration pipelines and their
 validation), it was obvious to project management if it satisfied their expectations or not. Whenever there were new
@@ -241,13 +268,17 @@ easy: identify what is different from what's done already, and reframe the reque
 "input-output-goal" trifecta.
 
 Having the "input-output-goal" framing improved the communications dramatically. A lot is said about "shared
-vocabularies" between stakeholders, but I was an outsider in the project. Asking the opinionated stakeholders about the
-nature of their requests, pushing back on the _"just do the same thing they did for their project"_ and ensuring a
-common understanding of what we're trying to achieve for _our project_ made it possible to **avoid mistakes**. It's a
-common pitfall to jump to known solutions, but you have to make sure that those solutions actually reflect **your
-problem**. _The other project_ had their own challenges and limitations, _our project_ was greenfield and did not
-inherit those either challenges or limitations, but instead we had our own.
+vocabularies" between stakeholders, but I was an outsider in the project.
+
+I asked the opinionated stakeholders about the nature of their requests, I pushed back on the _"just do the same thing
+they did for their project"_. This ensured that there was a common understanding of what we're trying to achieve for
+_our project_, it allowed us to **avoid mistakes**. It's a common pitfall to jump to known solutions, but you have to
+make sure that those solutions actually reflect **your problem**. _The other project_ had their own challenges and
+limitations, _our project_ was greenfield and did not inherit either challenges or limitations, but instead we had our
+own.
 
 I iterated on the design twice to ensure it accounted for extending the CI system with new "kinds of requests". We also
 iterated on the implementation several times, mostly to get rid of the over-abstracted pipelines and hone in on the
 actual requests and goals.
+
+I learned a lot in a new area and was very happy with the end result.
