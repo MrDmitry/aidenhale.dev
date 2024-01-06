@@ -161,7 +161,7 @@ blocks that enable the pipeline to achieve its goal. Try not to frame every proc
 goal.
 
 <a name="example_design_flow"></a>
-See [Example GOATed design flow](./extra/example_design_flow/) for hands-on example.
+See [Example GOATed design flow](./extra/example_design_flow/) for a hands-on example.
 
 ## Putting the GOAT into action
 
@@ -282,3 +282,7 @@ iterated on the implementation several times, mostly to get rid of the over-abst
 actual requests and goals.
 
 I learned a lot in a new area and was very happy with the end result.
+
+### Postscript
+
+I have written separately on the [dark side of automation](../../takes/automation/) and misconceptions surrounding it.
