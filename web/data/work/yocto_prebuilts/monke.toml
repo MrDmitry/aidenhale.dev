@@ -4,4 +4,4 @@ version = 0
 [Data]
 title = "Prebuilt Yocto layers"
 created = 2023-02-01T21:00:00-04:00
-tags = ["yocto", "python", "delivery"]
+tags = ["yocto", "python"]
