@@ -13,16 +13,18 @@ type HeadSnippet struct {
 	GitRev string
 }
 
-func NewHeadSnippet() HeadSnippet {
+func getRevision() string {
 	cmd := exec.Command("git", "rev-parse", "HEAD")
-	rev := strconv.FormatInt(time.Now().Unix(), 10)
 	out, err := cmd.Output()
 	if err != nil {
 		log.Warnf("failed to detect git revision: %+v", err)
-	} else {
-		rev = strings.Trim(string(out), "\n")
+		return strconv.FormatInt(time.Now().Unix(), 10)
 	}
+	return strings.Trim(string(out), "\n")
+}
+
+func NewHeadSnippet() HeadSnippet {
 	return HeadSnippet{
-		GitRev: rev,
+		GitRev: getRevision(),
 	}
 }

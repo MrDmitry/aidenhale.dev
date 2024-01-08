@@ -19,3 +19,4 @@ go.work
 
 # Generated files
 web/dist
+cmd/blog
