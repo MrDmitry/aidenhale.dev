@@ -118,18 +118,25 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	c.Render(code, errorPage, nil)
 }
 
-var statics = map[string]string{
+var staticDirs = map[string]string{
 	"/assets": "./web/assets",
 	"/css":    "./web/dist/css",
 	"/js":     "./web/js",
 }
 
+var staticFiles = map[string]string{
+	"/favicon.ico": "./web/assets/favicon.ico",
+}
+
 func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
-	for k := range statics {
-		if parts[1] == k[1:] {
-			return true
+	collections := []map[string]string{staticFiles, staticDirs}
+	for _, col := range collections {
+		for k := range col {
+			if parts[1] == k[1:] {
+				return true
+			}
 		}
 	}
 	for _, part := range parts {
@@ -259,9 +266,11 @@ func main() {
 		RedirectCode: http.StatusMovedPermanently,
 	}))
 
-	e.File("/favicon.ico", "./web/assets/favicon.ico")
+	for k, v := range staticFiles {
+		e.File(k, v)
+	}
 
-	for k, v := range statics {
+	for k, v := range staticDirs {
 		e.Static(k, v)
 	}
 

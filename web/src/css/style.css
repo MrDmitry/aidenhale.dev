@@ -56,7 +56,11 @@
     }
 
     .about img {
-        @apply hover:scale-125 transition duration-500 cursor-zoom-in object-contain md:object-cover
+        @apply hover:scale-125 transition duration-500 object-contain md:object-cover;
+    }
+
+    .about img:not(a img) {
+        @apply cursor-zoom-in;
     }
 
     .home-icon {
@@ -116,7 +120,7 @@
         @apply flex justify-center;
     }
 
-    .prose p img {
+    .prose p img:not(.not-prose img) {
         @apply md:max-w-2xl lg:max-w-4xl;
         @apply hover:scale-125 transition duration-500 cursor-zoom-in object-contain md:object-cover
     }
