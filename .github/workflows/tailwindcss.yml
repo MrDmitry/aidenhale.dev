@@ -16,10 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Download standalone tailwindcss
+    - name: Set up tailwindcss
       run: |
         curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.1/tailwindcss-linux-x64
         sudo install -m 755 tailwindcss-linux-x64 -D /usr/local/bin/tailwindcss
 
-    - name: Build css
+    - name: Build
       run: make css
