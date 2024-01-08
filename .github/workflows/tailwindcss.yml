@@ -18,8 +18,8 @@ jobs:
 
     - name: Download standalone tailwindcss
       run: |
-        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.1/tailwindcss-linux-arm64
-        sudo install -m 755 tailwindcss-linux-arm64 -D /usr/local/bin/tailwindcss
+        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.1/tailwindcss-linux-x64
+        sudo install -m 755 tailwindcss-linux-x64 -D /usr/local/bin/tailwindcss
 
     - name: Build css
       run: make css
