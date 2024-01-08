@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"io"
@@ -186,6 +187,9 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 }
 
 func main() {
+	portPtr := flag.Int("port", 31337, "port to bind to")
+	flag.Parse()
+
 	tmpls := make(map[string]TemplateEntry)
 
 	snippets := []string{
@@ -282,5 +286,5 @@ func main() {
 	e.GET("/blog/:category/:article/extra/:extra/", pages.ArticleAppendixPage)
 	e.GET("/blog/:category/:article/assets/:asset", pages.ArticleAsset)
 
-	e.Logger.Fatal(e.Start(":31337"))
+	e.Logger.Fatal(e.Start(":" + strconv.Itoa(*portPtr)))
 }
