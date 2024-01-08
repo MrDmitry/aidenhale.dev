@@ -9,7 +9,7 @@ I've spent 8 years working under some manifestation of Agile methodology:
 All of these years I had some [Agile shaman](https://grugbrain.dev/#grug-on-Agile) herding me around and boasting to
 management how much the team did. There was always more boasting than actual work completed.
 
-Every time I criticized Agile, even in a constructive manner "_that specific thing just didn't work for us_", I got to
+Every time I criticized Agile, even in a constructive manner _"that specific thing just didn't work for us"_, I got to
 hear the "well you just didn't Agile right".
 
 As with most popular things, the underlying values and ideas behind Agile are pretty cool:
