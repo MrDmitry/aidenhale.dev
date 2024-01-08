@@ -7,24 +7,24 @@ bigger than what I used to work with, so I decided to be a bit more thorough in 
 * Over 300 developers contributing directly to the project
 * Over 1000 developers consuming the middleware and integrating it into their toolchains
 
-Unsurprisingly, I was not able to find much information on the internet for considerations and overall approach to
-designing automation for a project of this scale. Most of the articles I found were authored by some CI service provider
-pitching some high-level _"What is CI anyway?"_ article as well as selling their services or solutions. Such articles
-would be a mix of technical solutions (how to configure certain types of pipelines) and some design considerations (what
-kinds of automation gates to create), but there is very little on the **values** that automation should aim to bring to
-the project, or general considerations when designing your own CI system.
+Unsurprisingly, I was not able to find much information online for considerations and overall approach to designing
+automation for a project of this scale. Most of the articles I found were authored by some CI service provider pitching
+some high-level _"What is CI anyway?"_ article as well as selling their services or solutions. Such articles would be a
+mix of technical solutions (how to configure certain types of pipelines) and some design considerations (what kinds of
+automation gates to create), but there is very little on the **values** that automation should aim to bring to the
+project, or even general considerations when designing your own CI system.
 
 There seems to be some consensus over how CI should look like, and more specifically how it should scale. But I was not
-able to find anything on how to approach the design from scratch. And so I decided to dive deeper and come up with such
+able to find anything on how to approach the design from scratch. So I decided to dive deeper and come up with such
 an approach.
 
 Throughout the design and implementation of this CI system I discovered that _automation as a tool_ constantly falls
 victim to the [XY problem](https://en.wikipedia.org/wiki/XY_problem) and, regardless of the underlying problem,
-stakeholders instinctively jump to _"this should be a part of automation"_, even though the actual problem may not be
-well understood. This provides a false sense of security that the problem is actually understood.
+stakeholders instinctively jump to _"this should be a part of automation"_ even when the actual problem may not be well
+understood. This provides a false sense of security that the problem is not only understood, but also almost solved.
 
-In this article I do not attempt to answer the "how to automate Y" question, but instead "how should I approach
-automation to begin with".
+In this article I do not attempt to answer the _"how to automate Y"_ question, but instead _"how should automation be
+approached"_.
 
 ## Goal
 
