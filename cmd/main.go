@@ -138,7 +138,7 @@ var generatedFiles = map[string]string{
 func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
-	if len(parts) == 0 {
+	if len(parts) < 2 {
 		return true
 	}
 
