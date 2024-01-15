@@ -105,7 +105,7 @@ func NewArticle(f string, c string, urlPrefix string, tags []string) (*Article, 
 	article.Category = c
 	article.Root = dir.Name()
 	article.Id = filepath.Base(article.Root)
-	article.Url = sanitizeUrl(fmt.Sprintf("%s/%s/", urlPrefix, article.Id))
+	article.Url = SanitizePath(fmt.Sprintf("%s/%s/", urlPrefix, article.Id))
 	article.ReadmePath = readme
 	article.Summary = string(summary)
 	article.ArticleData = meta.Data
@@ -135,12 +135,4 @@ func NewArticle(f string, c string, urlPrefix string, tags []string) (*Article, 
 	article.ReadTimeMinutes = int(math.Ceil(readTime.Minutes()))
 
 	return article, nil
-}
-
-func sanitizeUrl(s string) string {
-	s, err := filepath.Abs(s)
-	if err != nil {
-		return ""
-	}
-	return s + "/"
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"html/template"
@@ -129,10 +130,15 @@ var staticFiles = map[string]string{
 	"/favicon.ico": "./web/assets/favicon.ico",
 }
 
+var generatedFiles = map[string]string{
+	"/robots.txt":  "",
+	"/sitemap.xml": "",
+}
+
 func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
-	collections := []map[string]string{staticFiles, staticDirs}
+	collections := []map[string]string{staticFiles, generatedFiles, staticDirs}
 	for _, col := range collections {
 		for k := range col {
 			if parts[1] == k[1:] {
@@ -187,8 +193,23 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 }
 
 func main() {
+	protocol := "https"
+	flag.Func("protocol", "webserver protocol: [http, https] (default \"https\")", func(value string) error {
+		switch value {
+		case "http":
+			fallthrough
+		case "https":
+			protocol = value
+			return nil
+		default:
+			return errors.New("unexpected value, expected one of [http, https]")
+		}
+	})
+	hostname := flag.String("hostname", "aidenhale.dev", "hostname")
 	portPtr := flag.Int("port", 31337, "port to bind to")
 	flag.Parse()
+
+	urlPrefix := monke.SanitizeUrl(fmt.Sprintf("%s://%s/", protocol, *hostname))
 
 	tmpls := make(map[string]TemplateEntry)
 
@@ -200,6 +221,15 @@ func main() {
 	tmpls["404.html"] = newTemplateEntry(
 		[]string{
 			"./web/templates/404.html",
+			"./web/templates/base.html",
+		},
+		"base.html",
+		Light,
+	)
+
+	tmpls["500.html"] = newTemplateEntry(
+		[]string{
+			"./web/templates/500.html",
 			"./web/templates/base.html",
 		},
 		"base.html",
@@ -252,6 +282,14 @@ func main() {
 		Light,
 	)
 
+	tmpls["robots.txt"] = newTemplateEntry(
+		[]string{
+			"./web/templates/robots.txt",
+		},
+		"robots.txt",
+		"",
+	)
+
 	err := monke.InitDb("./web/data")
 
 	if err != nil {
@@ -269,6 +307,10 @@ func main() {
 		Skipper:      AssetSkipper,
 		RedirectCode: http.StatusMovedPermanently,
 	}))
+	e.Pre(middleware.RemoveTrailingSlashWithConfig(middleware.TrailingSlashConfig{
+		Skipper:      func(c echo.Context) bool { return !AssetSkipper(c) },
+		RedirectCode: http.StatusMovedPermanently,
+	}))
 
 	for k, v := range staticFiles {
 		e.File(k, v)
@@ -280,6 +322,18 @@ func main() {
 
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.GET("/", pages.IndexPage)
+	e.GET("/sitemap.xml", func(c echo.Context) error {
+		return pages.RawXML(c, func() ([]byte, error) {
+			return monke.SitemapXml(urlPrefix)
+		})
+	})
+	e.GET("/robots.txt", func(c echo.Context) error {
+		return c.Render(200, "robots.txt", struct {
+			UrlPrefix string
+		}{
+			UrlPrefix: urlPrefix,
+		})
+	})
 	e.GET("/about/", pages.StaticPage(200, "about.html"))
 	e.GET("/articles/", pages.ArticlesSnippet)
 	e.GET("/blog/:category/:article/", pages.ArticlePage)
