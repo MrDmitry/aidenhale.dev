@@ -10,6 +10,9 @@ build:
 run: build css
 	./${BIN_DIR}/${BINARY_NAME} $(ARGS)
 
+test:
+	go test -v ./...
+
 clean:
 	rm -rf ./${BIN_DIR}
 	rm -rf ./web/dist
