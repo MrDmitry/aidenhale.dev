@@ -138,6 +138,10 @@ var generatedFiles = map[string]string{
 func AssetSkipper(c echo.Context) bool {
 	path := c.Request().URL.Path
 	parts := strings.Split(path, "/")
+	if len(parts) == 0 {
+		return true
+	}
+
 	collections := []map[string]string{staticFiles, generatedFiles, staticDirs}
 	for _, col := range collections {
 		for k := range col {
@@ -146,6 +150,7 @@ func AssetSkipper(c echo.Context) bool {
 			}
 		}
 	}
+
 	for _, part := range parts {
 		if part == "assets" {
 			return true
