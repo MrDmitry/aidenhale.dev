@@ -44,5 +44,4 @@ func SitemapXml(urlPrefix string) ([]byte, error) {
 	}
 
 	return xml.MarshalIndent(urlset, "", "  ")
-
 }

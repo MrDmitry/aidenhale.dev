@@ -3,23 +3,27 @@ package monke
 import (
 	"net/url"
 	"path/filepath"
+	"strings"
 )
 
-func SanitizePath(s string) string {
-	if len(s) == 1 {
+func sanitizePath(s string) string {
+	if len(s) == 0 {
 		return s
+	}
+	if s[0] != '/' {
+		s = "/" + s
 	}
 	trailingSlash := s[len(s)-1] == '/'
 	s, err := filepath.Abs(s)
 	if err != nil {
 		return ""
 	}
-	switch trailingSlash {
-	case true:
+	s = strings.TrimRight(s, "/")
+
+	if trailingSlash {
 		return s + "/"
-	default:
-		return s
 	}
+	return s
 }
 
 func SanitizeUrl(s string) string {
@@ -27,6 +31,6 @@ func SanitizeUrl(s string) string {
 	if err != nil {
 		return ""
 	}
-	u.Path = SanitizePath(u.Path)
+	u.Path = sanitizePath(u.Path)
 	return u.String()
 }
