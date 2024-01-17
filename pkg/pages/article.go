@@ -80,7 +80,7 @@ func ArticleAsset(c echo.Context) error {
 	path := fmt.Sprintf("./web/data/%s/%s/assets/%s", c.Param("category"), c.Param("article"), c.Param("asset"))
 	file, err := os.Open(path)
 	if err != nil {
-		return c.NoContent(404)
+		return NotFoundPage(c)
 	}
 	defer file.Close()
 	return c.File(path)
