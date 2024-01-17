@@ -115,48 +115,62 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	if he, ok := err.(*echo.HTTPError); ok {
 		code = he.Code
 	}
-	c.Logger().Error(err)
 	errorPage := fmt.Sprintf("%d.html", code)
 	c.Render(code, errorPage, nil)
 }
 
-var staticDirs = map[string]string{
-	"/assets": "./web/assets",
-	"/css":    "./web/dist/css",
-	"/js":     "./web/js",
+type Router map[string]string
+
+var staticDirs = Router{
+	"/assets/": "./web/assets",
+	"/css/":    "./web/dist/css",
+	"/js/":     "./web/js",
 }
 
-var staticFiles = map[string]string{
+var staticFiles = Router{
 	"/favicon.ico": "./web/assets/favicon.ico",
 }
 
-var generatedFiles = map[string]string{
-	"/robots.txt":  "",
-	"/sitemap.xml": "",
+var generatedFiles = Router{
+	"/robots.txt":  "func",
+	"/sitemap.xml": "func",
 }
 
-func AssetSkipper(c echo.Context) bool {
-	path := c.Request().URL.Path
+func TrailingSlashNeeded(path string, dirRouters []Router, fileRouters []Router) bool {
+	// trim any leading or trailing slashes and enforce a leading slash
+	path = "/" + strings.Trim(path, "/")
+	pathLen := len(path)
 	parts := strings.Split(path, "/")
-	if len(parts) < 2 {
-		return true
+
+	// validate the path with file router collections
+	for _, router := range fileRouters {
+		if router[path] != "" {
+			return false
+		}
 	}
 
-	collections := []map[string]string{staticFiles, generatedFiles, staticDirs}
-	for _, col := range collections {
-		for k := range col {
-			if parts[1] == k[1:] {
-				return true
+	// validate every part of the path with dir router collections
+	for _, router := range dirRouters {
+		for key := range router {
+			if len(key) < pathLen && path[:len(key)] == key {
+				return false
 			}
 		}
 	}
 
-	for _, part := range parts {
-		if part == "assets" {
-			return true
-		}
+	// check the penultimate part against the known static dirs
+	if parts[len(parts)-2] == "assets" {
+		return false
 	}
-	return false
+	return true
+}
+
+func TrailingSlashHint(c echo.Context) bool {
+	path := c.Request().URL.Path
+	dirRouters := []Router{staticDirs}
+	fileRouters := []Router{staticFiles, generatedFiles}
+
+	return TrailingSlashNeeded(path, dirRouters, fileRouters)
 }
 
 func ResolveRelativePaths() echo.MiddlewareFunc {
@@ -309,11 +323,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Pre(ResolveRelativePaths())
 	e.Pre(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
-		Skipper:      AssetSkipper,
+		Skipper:      func(c echo.Context) bool { return !TrailingSlashHint(c) },
 		RedirectCode: http.StatusMovedPermanently,
 	}))
 	e.Pre(middleware.RemoveTrailingSlashWithConfig(middleware.TrailingSlashConfig{
-		Skipper:      func(c echo.Context) bool { return !AssetSkipper(c) },
+		Skipper:      TrailingSlashHint,
 		RedirectCode: http.StatusMovedPermanently,
 	}))
 

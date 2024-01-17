@@ -20,6 +20,10 @@ func TestSanitizeUrl(t *testing.T) {
 		"/path/?query":                 "/path/?query",                 // query is preserved
 		"/path/?param=/path/":          "/path/?param=/path/",          // query is preserved
 		"/path/?param=/path/../../../": "/path/?param=/path/../../../", // query is preserved
+		"https://bad.url//":            "https://bad.url/",             // works with URLs
+		"https://bad.url/root/.":       "https://bad.url/root",         // works with URLs but resolves . funny
+		"https://bad.url/root/./":      "https://bad.url/root/",        // recognizes a trailing slash
+		"https://bad.url/root/../../":  "https://bad.url/",             // respects path boundary
 	}
 	for s, want := range testData {
 		got := SanitizeUrl(s)
