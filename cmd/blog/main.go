@@ -1,14 +1,12 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"html/template"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -130,11 +128,8 @@ var staticDirs = Router{
 
 var staticFiles = Router{
 	"/favicon.ico": "./web/assets/favicon.ico",
-}
-
-var generatedFiles = Router{
-	"/robots.txt":  "func",
-	"/sitemap.xml": "func",
+	"/sitemap.xml": "./web/dist/sitemap.xml",
+	"/robots.txt":  "./web/dist/robots.txt",
 }
 
 func TrailingSlashNeeded(path string, dirRouters []Router, fileRouters []Router) bool {
@@ -169,7 +164,7 @@ func TrailingSlashNeeded(path string, dirRouters []Router, fileRouters []Router)
 func TrailingSlashHint(c echo.Context) bool {
 	path := c.Request().URL.Path
 	dirRouters := []Router{staticDirs}
-	fileRouters := []Router{staticFiles, generatedFiles}
+	fileRouters := []Router{staticFiles}
 
 	return TrailingSlashNeeded(path, dirRouters, fileRouters)
 }
@@ -212,71 +207,22 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 	}
 }
 
-func isDir(path string) (bool, error) {
-	status, err := os.Stat(path)
-	if err != nil {
-		return false, err
-	}
-	switch mode := status.Mode(); {
-	case mode.IsDir():
-		return true, nil
-	default:
-		return false, nil
-	}
-}
-
 func main() {
-	// find git directory for `git` calls
-	workdir, err := os.Getwd()
-	if err != nil {
-		panic("failed to detect current work directory, aborting")
-	}
-	gitdir := workdir + "/.git"
-	flag.Func("git-dir", "path to the website's .git directory (default `$PWD/.git`)", func(value string) error {
-		value, err = filepath.Abs(value)
-		if err != nil {
-			return err
-		}
-		res, err := isDir(value)
-		if err != nil {
-			return err
-		}
-		if res {
-			gitdir = value
-			return nil
-		}
-		return errors.New(value + " is not a directory")
+	gitdir := monke.Config.Gitdir
+	flag.Func("git-dir", fmt.Sprintf("path to the website's .git directory (default `%s`)", gitdir), func(value string) error {
+		v, err := monke.DirectoryValidator(value)
+		gitdir = v
+		return err
 	})
 
-	protocol := "https"
-	flag.Func("protocol", "webserver protocol: [http, https] (default \"https\")", func(value string) error {
-		switch value {
-		case "http":
-			fallthrough
-		case "https":
-			protocol = value
-			return nil
-		default:
-			return errors.New("unexpected value, expected one of [http, https]")
-		}
-	})
-	hostname := flag.String("hostname", "aidenhale.dev", "hostname")
 	portPtr := flag.Int("port", 31337, "port to bind to")
+
 	flag.Parse()
 
-	// validate and set gitdir
-	res, err := isDir(gitdir)
-	if err != nil || res == false {
-		panic(gitdir + " is not a directory")
+	monke.Config.Gitdir = gitdir
+	if err := monke.Config.Validate(); err != nil {
+		panic(err)
 	}
-	monke.Gitdir = gitdir
-	if revision, err := monke.GitRevision(); err != nil {
-		panic(gitdir + " is not a valid git directory: " + err.Error())
-	} else {
-		println("Current git revision: " + revision)
-	}
-
-	urlPrefix := monke.SanitizeUrl(fmt.Sprintf("%s://%s/", protocol, *hostname))
 
 	tmpls := make(map[string]TemplateEntry)
 
@@ -349,18 +295,8 @@ func main() {
 		Light,
 	)
 
-	tmpls["robots.txt"] = newTemplateEntry(
-		[]string{
-			"./web/templates/robots.txt",
-		},
-		"robots.txt",
-		"",
-	)
-
-	err = monke.InitDb("./web/data")
-
-	if err != nil {
-		log.Fatalf("could not initialize database: %+v", err)
+	if err := monke.InitDb("./web/data"); err != nil {
+		panic(err)
 	}
 
 	e := echo.New()
@@ -389,18 +325,6 @@ func main() {
 
 	e.HTTPErrorHandler = customHTTPErrorHandler
 	e.GET("/", pages.IndexPage)
-	e.GET("/sitemap.xml", func(c echo.Context) error {
-		return pages.RawXML(c, func() ([]byte, error) {
-			return monke.SitemapXml(urlPrefix)
-		})
-	})
-	e.GET("/robots.txt", func(c echo.Context) error {
-		return c.Render(200, "robots.txt", struct {
-			UrlPrefix string
-		}{
-			UrlPrefix: urlPrefix,
-		})
-	})
 	e.GET("/about/", pages.StaticPage(200, "about.html"))
 	e.GET("/articles/", pages.ArticlesSnippet)
 	e.GET("/blog/:category/:article/", pages.ArticlePage)
