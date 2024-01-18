@@ -21,16 +21,7 @@ jobs:
       with:
         go-version: '1.21.1'
 
-    - name: Build blog
-      run: make blog
-
-    - name: Build sitemap
-      run: make sitemap
-
-    - name: Build robots
-      run: make robots
-
-    - name: Build all
+    - name: Build
       run: make build
 
   test:
