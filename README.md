@@ -17,11 +17,10 @@ database, but I feel like the acronym is already good enough.
 
 ## Return to monke
 
-I wanted to create a blog. I worked in webdev in the early 2010s and somehow skipped most of the rapid evolution that
+I wanted to create a blog. I worked in webdev in the early 2010s but somehow skipped most of the rapid evolution that
 happened with react, django, hugo and all the others. Over the past few years I played around with different frameworks
-and tools (angularjs, react, vue, django, nextjs, hugo) and found most of them overwhelming, or an overkill for a
-personal blog or a hobby project. So I figured I could combine developing my personal website with learning some go and
-that's where we are.
+and tools (angularjs, react, vue, django, nextjs, hugo) and found most of them either overwhelming, or an overkill for a
+personal blog or a hobby project. So I figured I could combine developing my personal website with learning some go.
 
 I already had a collection of Markdown documents with notes I drafted over the years, some in better condition than
 others, and I wanted to upload them to GitHub for sharing them with friends and colleagues. But I just could not stop
@@ -30,10 +29,11 @@ myself from using this opportunity to also learn some go along the way.
 I decided to reject the mainstream stacks and return to monke - use filesystem as my database, cache the articles in go
 runtime and render Markdown to HTML on the server side.
 
-Tailwind was an easy pick, as it felt like I'm back in the [good ol' bootstrap
-days](https://web.archive.org/web/20131202065213/http://getbootstrap.com/examples/theme/).
+Tailwind was an easy pick, as it felt like I'm back in the <a
+href="https://web.archive.org/web/20131202065213/http://getbootstrap.com/examples/theme/" target="_blank">good ol'
+bootstrap days</a>.
 
-The only remaining part was to figure out how interactive (if at all) should the blog be. I could go the static page
+The only remaining part was to figure out how interactive (if at all) the blog should be. I could go the static page
 route (and coincidentally learn how to prepare static websites) or the dynamic route, with filtering, infinite scrolls
 and all that jazz. How could I pass the opportunity to use `htmx`?! Of course it has to be dynamic!
 
