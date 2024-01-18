@@ -2,15 +2,13 @@ Personal website powered by the **METH** stack.
 
 ## The METH stack
 
-<a href="https://daringfireball.net/projects/markdown/" target="_blank">**M**arkdown</a> handles the content and
-formatting.
+[**M**arkdown](https://daringfireball.net/projects/markdown/) handles the content and formatting.
 
-<a href="https://github.com/labstack/echo" target="_blank">**E**cho</a> handles the templating, rendering and general
-webserver things.
+[**E**cho](https://github.com/labstack/echo) handles the templating, rendering and general webserver things.
 
-<a href="https://github.com/tailwindlabs/tailwindcss/" target="_blank">**T**ailwindcss</a> handles the styling.
+[**T**ailwindcss](https://github.com/tailwindlabs/tailwindcss/) handles the styling.
 
-<a href="https://htmx.org/" target="_blank">**H**tmx</a> handles the frontend.
+[**H**tmx](https://htmx.org/) handles the frontend.
 
 I could throw another T in there, as I am using [Toml](https://toml.io/en/) for article metadata in the absence of a
 database, but I feel like the acronym is already good enough.
@@ -29,9 +27,8 @@ myself from using this opportunity to also learn some go along the way.
 I decided to reject the mainstream stacks and return to monke - use filesystem as my database, cache the articles in go
 runtime and render Markdown to HTML on the server side.
 
-Tailwind was an easy pick, as it felt like I'm back in the <a
-href="https://web.archive.org/web/20131202065213/http://getbootstrap.com/examples/theme/" target="_blank">good ol'
-bootstrap days</a>.
+Tailwind was an easy pick, as it felt like I'm back in the [good ol' bootstrap
+days](https://web.archive.org/web/20131202065213/http://getbootstrap.com/examples/theme/).
 
 The only remaining part was to figure out how interactive (if at all) the blog should be. I could go the static page
 route (and coincidentally learn how to prepare static websites) or the dynamic route, with filtering, infinite scrolls
