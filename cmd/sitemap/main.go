@@ -4,24 +4,20 @@ import (
 	"flag"
 	"fmt"
 	"mrdmitry/blog/pkg/monke"
-	"os"
 )
 
 func main() {
-	// find git directory for `git` calls
-	workdir, err := os.Getwd()
-	if err != nil {
-		panic("failed to detect current work directory, aborting")
-	}
-	gitdir := workdir + "/.git"
-	flag.Func("git-dir", "path to the website's .git directory (default `$PWD/.git`)", func(value string) error {
-		gitdir, err = monke.DirectoryValidator(value)
+	gitdir := monke.Config.Gitdir
+	flag.Func("git-dir", fmt.Sprintf("path to the website's .git directory (default `%s`)", gitdir), func(value string) error {
+		v, err := monke.DirectoryValidator(value)
+		gitdir = v
 		return err
 	})
 
 	protocol := "https"
 	flag.Func("protocol", "webserver protocol: [http, https] (default \"https\")", func(value string) error {
-		protocol, err = monke.ProtocolValidator(value)
+		v, err := monke.ProtocolValidator(value)
+		protocol = v
 		return err
 	})
 
@@ -29,14 +25,15 @@ func main() {
 
 	flag.Parse()
 
-	err = monke.InitDb("./web/data")
+	monke.Config.Gitdir = gitdir
+	if err := monke.Config.Validate(); err != nil {
+		panic(err)
+	}
 
-	// validate and set gitdir
-	err = monke.GitDirectoryValidator(gitdir)
+	err := monke.InitDb("./web/data")
 	if err != nil {
 		panic(err)
 	}
-	monke.Gitdir = gitdir
 
 	urlPrefix := monke.SanitizeUrl(fmt.Sprintf("%s://%s/", protocol, *hostname))
 

@@ -2,6 +2,7 @@ package monke
 
 import (
 	"net/url"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -11,7 +12,30 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-var Gitdir string = "./.git"
+type Configuration struct {
+	Gitdir string
+}
+
+var Config Configuration
+
+func init() {
+	workdir, err := os.Getwd()
+	if err != nil {
+		panic("failed to detect current work directory, aborting")
+	}
+
+	Config = Configuration{
+		Gitdir: workdir + "/.git",
+	}
+}
+
+func (c *Configuration) Validate() error {
+	err := GitDirectoryValidator(c.Gitdir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func sanitizePath(s string) string {
 	if len(s) == 0 {
@@ -53,7 +77,7 @@ func gitExec(gitdir string, params ...string) (string, error) {
 }
 
 func GitRevision(gitdir ...string) (string, error) {
-	workdir := Gitdir
+	workdir := Config.Gitdir
 	if len(gitdir) > 0 {
 		workdir = gitdir[0]
 	}
@@ -66,7 +90,7 @@ func GitRevision(gitdir ...string) (string, error) {
 }
 
 func GitLastLogTimeISO(path string, gitdir ...string) (time.Time, error) {
-	workdir := Gitdir
+	workdir := Config.Gitdir
 	if len(gitdir) > 0 {
 		workdir = gitdir[0]
 	}

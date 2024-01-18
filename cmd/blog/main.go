@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -209,13 +208,8 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 }
 
 func main() {
-	// find git directory for `git` calls
-	workdir, err := os.Getwd()
-	if err != nil {
-		panic("failed to detect current work directory, aborting")
-	}
-	gitdir := workdir + "/.git"
-	flag.Func("git-dir", "path to the website's .git directory (default `$PWD/.git`)", func(value string) error {
+	gitdir := monke.Config.Gitdir
+	flag.Func("git-dir", fmt.Sprintf("path to the website's .git directory (default `%s`)", gitdir), func(value string) error {
 		v, err := monke.DirectoryValidator(value)
 		gitdir = v
 		return err
@@ -225,12 +219,10 @@ func main() {
 
 	flag.Parse()
 
-	// validate and set gitdir
-	err = monke.GitDirectoryValidator(gitdir)
-	if err != nil {
+	monke.Config.Gitdir = gitdir
+	if err := monke.Config.Validate(); err != nil {
 		panic(err)
 	}
-	monke.Gitdir = gitdir
 
 	tmpls := make(map[string]TemplateEntry)
 
@@ -303,10 +295,9 @@ func main() {
 		Light,
 	)
 
-	err = monke.InitDb("./web/data")
-
+	err := monke.InitDb("./web/data")
 	if err != nil {
-		log.Fatalf("could not initialize database: %+v", err)
+		panic(err)
 	}
 
 	e := echo.New()
