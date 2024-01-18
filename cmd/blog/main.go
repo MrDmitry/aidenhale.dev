@@ -295,8 +295,7 @@ func main() {
 		Light,
 	)
 
-	err := monke.InitDb("./web/data")
-	if err != nil {
+	if err := monke.InitDb("./web/data"); err != nil {
 		panic(err)
 	}
 

@@ -30,8 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	err := monke.InitDb("./web/data")
-	if err != nil {
+	if err := monke.InitDb("./web/data"); err != nil {
 		panic(err)
 	}
 
@@ -41,6 +40,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(`<?xml version="1.0" encoding="UTF-8"?>`)
 	fmt.Println(string(data))
 }
