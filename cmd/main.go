@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -211,7 +212,42 @@ func ResolveRelativePaths() echo.MiddlewareFunc {
 	}
 }
 
+func isDir(path string) (bool, error) {
+	status, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+	switch mode := status.Mode(); {
+	case mode.IsDir():
+		return true, nil
+	default:
+		return false, nil
+	}
+}
+
 func main() {
+	// find git directory for `git` calls
+	workdir, err := os.Getwd()
+	if err != nil {
+		panic("failed to detect current work directory, aborting")
+	}
+	gitdir := workdir + "/.git"
+	flag.Func("git-dir", "path to the website's .git directory (default `$PWD/.git`)", func(value string) error {
+		value, err = filepath.Abs(value)
+		if err != nil {
+			return err
+		}
+		res, err := isDir(value)
+		if err != nil {
+			return err
+		}
+		if res {
+			gitdir = value
+			return nil
+		}
+		return errors.New(value + " is not a directory")
+	})
+
 	protocol := "https"
 	flag.Func("protocol", "webserver protocol: [http, https] (default \"https\")", func(value string) error {
 		switch value {
@@ -227,6 +263,18 @@ func main() {
 	hostname := flag.String("hostname", "aidenhale.dev", "hostname")
 	portPtr := flag.Int("port", 31337, "port to bind to")
 	flag.Parse()
+
+	// validate and set gitdir
+	res, err := isDir(gitdir)
+	if err != nil || res == false {
+		panic(gitdir + " is not a directory")
+	}
+	monke.Gitdir = gitdir
+	if revision, err := monke.GitRevision(); err != nil {
+		panic(gitdir + " is not a valid git directory: " + err.Error())
+	} else {
+		println("Current git revision: " + revision)
+	}
 
 	urlPrefix := monke.SanitizeUrl(fmt.Sprintf("%s://%s/", protocol, *hostname))
 
@@ -309,7 +357,7 @@ func main() {
 		"",
 	)
 
-	err := monke.InitDb("./web/data")
+	err = monke.InitDb("./web/data")
 
 	if err != nil {
 		log.Fatalf("could not initialize database: %+v", err)
